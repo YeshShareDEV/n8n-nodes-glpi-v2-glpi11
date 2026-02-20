@@ -156,11 +156,10 @@ export class GlpiV2 implements INodeType {
 		);
 
 		// Headers para todas as requisições posteriores
-		const headers = {
-			'Session-Token': sessionToken, // Mantendo Session-Token conforme solicitado
-			// 'Authorization': `Bearer ${sessionToken}`, // Se necessário futuramente
-			'Content-Type': 'application/json',
-		};
+		   const headers = {
+			   'Authorization': `Bearer ${sessionToken}`,
+			   'Content-Type': 'application/json',
+		   };
 
 		for (let itemIndex = 0; itemIndex < items.length; itemIndex++) {
 			try {
