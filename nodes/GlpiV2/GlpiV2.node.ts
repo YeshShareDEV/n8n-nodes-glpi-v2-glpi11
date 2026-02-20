@@ -457,23 +457,45 @@ export class GlpiV2 implements INodeType {
 					throw new ApplicationError(`Unknown operation: ${operation}`, { level: 'warning' });
 				}
 
-				const response = await this.helpers.httpRequest(options);
-				returnData.push({
-					json: response,
-					pairedItem: { item: itemIndex },
-				});
-			} catch (error) {
-				if (this.continueOnFail()) {
-					returnData.push({
-						json: { error: error instanceof Error ? error.message : String(error) },
-						pairedItem: { item: itemIndex },
-					});
-				} else {
-					throw new NodeOperationError(this.getNode(), error, {
-						itemIndex,
-					});
-				}
-			}
+				   try {
+					   const response = await this.helpers.httpRequest(options);
+					   returnData.push({
+						   json: response,
+						   pairedItem: { item: itemIndex },
+					   });
+				   } catch (error) {
+					   // Monta detalhes úteis para depuração
+					   let errorDetails = {
+						   message: error instanceof Error ? error.message : String(error),
+						   request: {
+							   method: options.method,
+							   url: options.url,
+							   headers: options.headers,
+							   body: options.body,
+						   },
+					   };
+					   if (error && typeof error === 'object' && 'response' in error) {
+						   // Pode conter resposta da API
+						   errorDetails = {
+							   ...errorDetails,
+							   response: {
+								   status: error.response?.status,
+								   statusText: error.response?.statusText,
+								   body: error.response?.body,
+							   },
+						   };
+					   }
+					   if (this.continueOnFail()) {
+						   returnData.push({
+							   json: { error: errorDetails },
+							   pairedItem: { item: itemIndex },
+						   });
+					   } else {
+						   throw new NodeOperationError(this.getNode(), errorDetails, {
+							   itemIndex,
+						   });
+					   }
+				   }
 		}
 
 		return [returnData];
