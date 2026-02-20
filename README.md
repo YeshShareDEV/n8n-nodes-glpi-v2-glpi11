@@ -1,4 +1,4 @@
-# n8n-nodes-glpi-v2
+# n8n-nodes-glpi-v2-glpi11
 
 ![n8n](https://img.shields.io/badge/n8n-community-orange) ![GLPI](https://img.shields.io/badge/GLPI-REST%20API-blue)
 
