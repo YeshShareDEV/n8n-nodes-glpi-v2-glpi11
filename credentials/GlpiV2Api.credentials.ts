@@ -16,7 +16,7 @@ export class GlpiV2Api implements ICredentialType {
 			headers: {
 				'Content-Type': 'application/json',
 			},
-			body: '={ "grant_type": "password", "client_id": "{{$credentials.clientId}}", "client_secret": "{{$credentials.clientSecret}}", "username": "{{$credentials.username}}", "password": "{{$credentials.password}}" }',
+			body: '={ "grant_type": "password", "client_id": "{{$credentials.clientId}}", "client_secret": "{{$credentials.clientSecret}}", "username": "{{$credentials.username}}", "password": "{{$credentials.password}}", "scope": "{{$credentials.scope}}" }',
 		},
 	};
 
@@ -29,6 +29,14 @@ export class GlpiV2Api implements ICredentialType {
 			placeholder: 'https://glpi.example.com',
 			required: true,
 			description: 'URL base do GLPI (sem /api.php/v.21 - será adicionado automaticamente)',
+		},
+		{
+			displayName: 'Scope',
+			name: 'scope',
+			type: 'string',
+			default: 'api graphql',
+			required: true,
+			description: 'Escopos de acesso para o token OAuth2 (ex: api graphql)',
 		},
 		{
 			displayName: 'Client ID',

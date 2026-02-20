@@ -17,14 +17,14 @@ export const administrationManagementGetDescription: INodeProperties[] = [
 		description: 'ID of the user to retrieve. Leave empty to get all users.',
 	},
 	{
-		displayName: 'GET /api.php/{ItemType}/{ItemID}',
+		displayName: 'GET /api.php/{ItemType} ou /api.php/{ItemType}/{ItemID}',
 		name: 'administrationManagementGetNotice',
 		type: 'notice',
 		default: '',
 		displayOptions: {
 			show: showOnlyForAdministrationManagementGet,
 		},
-		description: 'Retrieve a specific user by their ID',
+		description: 'GET sem ID retorna todos os usuários do tipo selecionado (ex: /api.php/Administration/User). GET com ID retorna um usuário específico (ex: /api.php/Administration/User/123).',
 	},
 ];
 

@@ -15,10 +15,10 @@ export const assistanceManagementGetDescription: INodeProperties[] = [
 		},
 		default: 0,
 		description:
-			'ID of the ITIL object to retrieve. Use 0 to fetch all objects.',
+			'ID of the ITIL object to retrieve. Leave empty to list all objects.',
 	},
 	{
-		displayName: 'GET /api.php/{ItemType}/{ItemID}',
+		displayName: 'GET /api.php/{ItemType} ou /api.php/{ItemType}/{ItemID}',
 		name: 'itilObjectsGetNotice',
 		type: 'notice',
 		default: '',
@@ -26,7 +26,6 @@ export const assistanceManagementGetDescription: INodeProperties[] = [
 			show: showOnlyForAssistanceManagementGet,
 		},
 		description:
-			'Retrieve a specific ITIL object (Ticket, Change, Problem, etc.) by its ID. ' +
-			'If TicketID is 0 or empty, all objects of the selected type will be returned.',
+			'GET sem ID retorna todos os objetos do tipo selecionado (ex: /api.php/Assistance/Ticket). GET com ID retorna um objeto específico (ex: /api.php/Assistance/Ticket/123).',
 	},
 ];

@@ -17,14 +17,14 @@ export const managementGetDescription: INodeProperties[] = [
 		description: 'ID of the administration item to retrieve. Leave empty to get all items of the selected type.',
 	},
 	{
-		displayName: 'GET /api.php/{ItemType}/{ItemID}',
+		displayName: '/api.php/{ItemType}/{ItemID}',
 		name: 'administrationManagementGetNotice',
 		type: 'notice',
 		default: '',
 		displayOptions: {
 			show: showOnlyForManagementGet,
 		},
-		description: 'Get the data of a single administration item. The ItemType Can be: User, Group and Profile.',
+			description: 'GET sem ID retorna todos os itens do tipo selecionado (ex: /api.php/Management/User). GET com ID retorna um item específico (ex: /api.php/Management/User/123).',
 	},
 ];
 
