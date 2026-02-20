@@ -1,9 +1,9 @@
 {
-	"name": "@justbrunasso/n8n-nodes-glpi-v2",
+	"name": "@yeshsharedev/n8n-nodes-glpi-v2-glpi11",
 	"version": "2.0.3",
 	"description": "GLPI Rest API Node compatible with GLPI API V2.",
 	"license": "MIT",
-	"homepage": "https://github.com/PhyBruno/n8n-nodes-glpi-v2",
+	"homepage": "https://github.com/YeshShareDEV/n8n-nodes-glpi-v2-glpi11",
 	"keywords": [
 		"n8n-community-node-package",
 		"n8n",
@@ -12,12 +12,12 @@
 		"ticket-system"
 	],
 	"author": {
-		"name": "justbrunasso",
-		"email": "brusans2@gmail.com"
+		"name": "YeshShareDEV",
+		"email": "contato@yeshshare.com.br"
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/PhyBruno/n8n-nodes-glpi-v2.git"
+		"url": "https://github.com/YeshShareDEV/n8n-nodes-glpi-v2-glpi11.git"
 	},
 	"scripts": {
 		"build": "n8n-node build",
