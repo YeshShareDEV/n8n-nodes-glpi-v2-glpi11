@@ -69,8 +69,8 @@ async function getOAuthToken(
 
 export class GlpiV2 implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'GLPI Rest API V2',
-		name: 'glpiV2',
+		displayName: 'GLPI Rest API V2 (Fork)',
+		name: 'glpiV2Fork',
 		icon: 'file:glpi_v2.svg',
 		group: ['transform'],
 		version: 1,
