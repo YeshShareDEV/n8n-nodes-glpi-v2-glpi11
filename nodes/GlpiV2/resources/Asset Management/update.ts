@@ -6,8 +6,8 @@ const showOnlyForAssetManagementUpdate = {
 };
 
 export const AssetManagementUpdateDescription: INodeProperties[] = [
-    {
-		displayName: 'PUT /apirest.php/{ItemType}/{ItemID}',
+	{
+		displayName: 'PUT /api.php/{ItemType}/{ItemID}',
 		name: 'assetManagementUpdateNotice',
 		type: 'notice',
 		default: '',

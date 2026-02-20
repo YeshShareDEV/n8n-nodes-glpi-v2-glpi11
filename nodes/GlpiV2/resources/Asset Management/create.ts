@@ -6,8 +6,8 @@ const showOnlyForAssetManagementCreate = {
 };
 
 export const AssetManagementCreateDescription: INodeProperties[] = [
-    {
-		displayName: 'POST /apirest.php/{ItemType}',
+	{
+		displayName: 'POST /api.php/{ItemType}',
 		name: 'assetManagementCreateNotice',
 		type: 'notice',
 		default: '',

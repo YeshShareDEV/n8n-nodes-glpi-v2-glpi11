@@ -34,7 +34,7 @@ export const administrationManagementUpdateDescription: INodeProperties[] = [
 		description: 'ID of the group to update',
 	},
 	{
-		displayName: 'PUT /apirest.php/{ItemType}/{ItemID}',
+		displayName: 'PUT /api.php/{ItemType}/{ItemID}',
 		name: 'administrationManagementUpdateGroupNotice',
 		type: 'notice',
 		default: '',

@@ -2,7 +2,7 @@ import type { INodeProperties } from 'n8n-workflow';
 
 export const toolManagementCreateDescription: INodeProperties[] = [
 	{
-		displayName: 'POST /apirest.php/{ItemType}',
+		displayName: 'POST /api.php/{ItemType}',
 		name: 'toolManagementCreateNotice',
 		type: 'notice',
 		default: '',

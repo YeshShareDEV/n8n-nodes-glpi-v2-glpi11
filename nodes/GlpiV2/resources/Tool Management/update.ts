@@ -16,7 +16,7 @@ export const toolManagementUpdateDescription: INodeProperties[] = [
 		description: 'ID of the item',
 	},
 	{
-		displayName: 'PUT /apirest.php/{ItemType}/{ItemID}',
+		displayName: 'PUT /api.php/{ItemType}/{ItemID}',
 		name: 'toolManagementUpdateNotice',
 		type: 'notice',
 		default: '',

@@ -18,7 +18,7 @@ export const managementDeleteDescription: INodeProperties[] = [
 		description: 'ID of the item to delete',
 	},
 	{
-		displayName: 'DELETE /apirest.php/{ItemType}/{ItemID}',
+		displayName: 'DELETE /api.php/{ItemType}/{ItemID}',
 		name: 'managementDeleteNotice',
 		type: 'notice',
 		default: '',

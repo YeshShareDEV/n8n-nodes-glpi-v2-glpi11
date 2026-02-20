@@ -18,7 +18,7 @@ export const assistanceManagementUpdateDescription: INodeProperties[] = [
 		description: 'ID of the Assistance Management item to update',
 	},
 	{
-		displayName: 'PUT /apirest.php/{ItemType}/{ItemID}',
+		displayName: 'PUT /api.php/{ItemType}/{ItemID}',
 		name: 'assistanceManagementUpdateNotice',
 		type: 'notice',
 		default: '',

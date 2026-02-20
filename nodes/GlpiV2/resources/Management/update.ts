@@ -7,7 +7,7 @@ const showOnlyForManagementUpdate = {
 
 export const managementUpdateDescription: INodeProperties[] = [
 	{
-		displayName: 'PUT /apirest.php/{ItemType}/{ItemID}',
+		displayName: 'PUT /api.php/{ItemType}/{ItemID}',
 		name: 'administrationManagementUpdateNotice',
 		type: 'notice',
 		default: '',

@@ -7,7 +7,7 @@ const showOnlyForAssistanceManagementCreate = {
 
 export const assistanceManagementCreateDescription: INodeProperties[] = [
 	{
-		displayName: 'POST /apirest.php/{ItemType}',
+		displayName: 'POST /api.php/{ItemType}',
 		name: 'itilObjectsCreateNotice',
 		type: 'notice',
 		default: '',

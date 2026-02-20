@@ -18,7 +18,7 @@ export const assetManagementDeleteDescription: INodeProperties[] = [
 		description: 'ID of the asset to delete',
 	},
 	{
-		displayName: 'DELETE /apirest.php/{ItemType}/{ItemID}',
+		displayName: 'DELETE /api.php/{ItemType}/{ItemID}',
 		name: 'assetManagementDeleteNotice',
 		type: 'notice',
 		default: '',

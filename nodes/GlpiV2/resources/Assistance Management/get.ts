@@ -18,7 +18,7 @@ export const assistanceManagementGetDescription: INodeProperties[] = [
 			'ID of the ITIL object to retrieve. Use 0 to fetch all objects.',
 	},
 	{
-		displayName: 'GET /apirest.php/{ItemType}/{ItemID}',
+		displayName: 'GET /api.php/{ItemType}/{ItemID}',
 		name: 'itilObjectsGetNotice',
 		type: 'notice',
 		default: '',

@@ -16,7 +16,7 @@ export const toolManagementGetDescription: INodeProperties[] = [
 		description: 'ID of the item',
 	},
 	{
-		displayName: 'GET /apirest.php/{ItemType}/{ItemID}',
+		displayName: 'GET /api.php/{ItemType}/{ItemID}',
 		name: 'toolManagementGetNotice',
 		type: 'notice',
 		default: '',

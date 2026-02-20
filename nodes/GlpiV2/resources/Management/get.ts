@@ -16,8 +16,8 @@ export const managementGetDescription: INodeProperties[] = [
 		default: 0,
 		description: 'ID of the administration item to retrieve. Leave empty to get all items of the selected type.',
 	},
-    {
-		displayName: 'GET /apirest.php/{ItemType}/{ItemID}',
+	{
+		displayName: 'GET /api.php/{ItemType}/{ItemID}',
 		name: 'administrationManagementGetNotice',
 		type: 'notice',
 		default: '',

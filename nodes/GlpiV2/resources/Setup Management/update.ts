@@ -2,7 +2,7 @@ import type { INodeProperties } from 'n8n-workflow';
 
 export const setupManagementUpdateDescription: INodeProperties[] = [
 	{
-		displayName: 'PUT /apirest.php/{ItemType}/{ItemID}',
+		displayName: 'PUT /api.php/{ItemType}/{ItemID}',
 		name: 'setupManagementUpdateNotice',
 		type: 'notice',
 		default: '',

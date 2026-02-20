@@ -15,7 +15,7 @@ export const administrationManagementGroupDescription: INodeProperties[] = [
 		description: 'ID of the group to retrieve or update. Leave empty to get all groups.',
 	},
 	{
-		displayName: 'GET /apirest.php/{ItemType}/{ItemID}',
+		displayName: 'GET /api.php/{ItemType}/{ItemID}',
 		name: 'groupGetNotice',
 		type: 'notice',
 		default: '',
@@ -28,7 +28,7 @@ export const administrationManagementGroupDescription: INodeProperties[] = [
 		description: 'Retrieve a specific group by its ID',
 	},
 	{
-		displayName: 'PUT /apirest.php/{ItemType}/{ItemID}',
+		displayName: 'PUT /api.php/{ItemType}/{ItemID}',
 		name: 'groupUpdateNotice',
 		type: 'notice',
 		default: '',

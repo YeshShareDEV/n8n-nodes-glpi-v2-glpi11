@@ -6,8 +6,8 @@ const showOnlyForManagementCreate = {
 };
 
 export const managementCreateDescription: INodeProperties[] = [
-    {
-		displayName: 'POST /apirest.php/{ItemType}',
+	{
+		displayName: 'POST /api.php/{ItemType}',
 		name: 'administrationManagementCreateNotice',
 		type: 'notice',
 		default: '',

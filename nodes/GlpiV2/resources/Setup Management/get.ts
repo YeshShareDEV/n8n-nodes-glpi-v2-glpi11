@@ -16,7 +16,7 @@ export const setupManagementGetDescription: INodeProperties[] = [
 		description: 'ID of the item',
 	},
 	{
-		displayName: 'GET /apirest.php/{ItemType}/{ItemID}',
+		displayName: 'GET /api.php/{ItemType}/{ItemID}',
 		name: 'setupManagementGetNotice',
 		type: 'notice',
 		default: '',
