@@ -23,7 +23,7 @@ Node para integração do [GLPI](https://glpi-project.org/) com o [n8n](https://
 
 1. Importe o node customizado no painel do n8n
 2. Crie uma credencial do tipo **GLPI API** informando:
-   - GLPI URL (ex: https://glpi.seudominio.com/apirest.php)
+   - GLPI URL (ex: https://glpi.seudominio.com/api.php)
    - App Token
    - Username
    - Password

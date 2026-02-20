@@ -18,7 +18,7 @@ export const assistanceManagementSolveDescription: INodeProperties[] = [
 		description: 'ID of the item to solve',
 	},
 	{
-		displayName: 'POST /apirest.php/ITILSolution',
+		displayName: 'POST /api.php/ITILSolution',
 		name: 'assistanceManagementSolveNotice',
 		type: 'notice',
 		default: '',

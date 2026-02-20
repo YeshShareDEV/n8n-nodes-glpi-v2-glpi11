@@ -41,7 +41,7 @@ export const administrationManagementProfileDescription: INodeProperties[] = [
 		description: 'Retrieve a specific profile by its ID',
 	},
 	{
-		displayName: 'PUT /apirest.php/{ItemType}/{ItemID}',
+		displayName: 'PUT /api.php/{ItemType}/{ItemID}',
 		name: 'profileUpdateNotice',
 		type: 'notice',
 		default: '',

@@ -41,7 +41,7 @@ import { ICredentialType } from 'n8n-workflow';
 export class GlpiApi implements ICredentialType {
   name = 'glpiApi';
   displayName = 'GLPI API';
-  documentationUrl = 'https://atendimento.centrium.com.br/apirest.php';
+  documentationUrl = 'https://atendimento.centrium.com.br/api.php';
 
   properties = [
     {
@@ -49,7 +49,7 @@ export class GlpiApi implements ICredentialType {
       name: 'host',
       type: 'string',
       default: '',
-      placeholder: 'https://glpi.exemplo.com/apirest.php',
+      placeholder: 'https://glpi.exemplo.com/api.php',
       required: true,
     },
     {

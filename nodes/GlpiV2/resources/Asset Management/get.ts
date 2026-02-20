@@ -17,7 +17,7 @@ export const AssetManagementGetDescription: INodeProperties[] = [
 		description: 'ID of the asset to retrieve. Leave empty to get all assets of the selected type.',
 	},
 	{
-		displayName: 'GET /api.php/{ItemType} ou /api.php/{ItemType}/{ItemID}',
+		displayName: 'GET /api.php/{ItemType}/{ItemID}',
 		name: 'assetManagementGetNotice',
 		type: 'notice',
 		default: '',

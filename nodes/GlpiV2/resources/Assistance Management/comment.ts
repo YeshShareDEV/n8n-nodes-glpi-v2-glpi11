@@ -18,7 +18,7 @@ export const assistanceManagementCommentDescription: INodeProperties[] = [
 		description: 'ID of the Assistance Management item to comment on',
 	},
 	{
-		displayName: 'POST /apirest.php/ITILFollowup/{ItemType}/{ItemID}',
+		displayName: 'POST /api.php/ITILFollowup/{ItemType}/{ItemID}',
 		name: 'assistanceManagementCommentNotice',
 		type: 'notice',
 		default: '',

@@ -139,7 +139,7 @@ export class GlpiV2 implements INodeType {
 		const creds = await this.getCredentials('glpiV2Api');
 		// Ajusta URL para /api.php se necessário
 		let baseUrl = (creds.host as string).trim();
-		// Remove /apirest.php legacy se existir e garante /api.php
+		// Remove /api.php legacy se existir e garante /api.php
 		baseUrl = baseUrl.replace(/\/apirest\.php\/?$/, '');
 		if (!baseUrl.endsWith('/api.php')) {
 			baseUrl = baseUrl.replace(/\/+$/, '') + '/api.php';
