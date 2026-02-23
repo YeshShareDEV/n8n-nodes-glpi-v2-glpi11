@@ -1,6 +1,6 @@
 {
 	"name": "n8n-nodes-glpi-v2-fork",
-	"version": "2.0.12",
+	"version": "2.0.12.1",
 	"description": "GLPI Rest API Node compatible with GLPI API V2.",
 	"license": "MIT",
 	"homepage": "https://github.com/YeshShareDEV/n8n-nodes-glpi-v2-glpi11",
