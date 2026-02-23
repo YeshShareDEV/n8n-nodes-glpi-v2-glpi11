@@ -195,14 +195,17 @@ export class GlpiV2 implements INodeType {
 					normalizedOperation = 'update';
 				}
 
-				if (normalizedOperation === 'get') {
-					const id = this.getNodeParameter('itemId', itemIndex, '') as string;
-					options = {
-						method: 'GET',
-						url: `${baseUrl}/${itemtype}${id ? '/' + id : ''}`,
-						headers,
-						json: true,
-					};
+				   if (normalizedOperation === 'get') {
+					   const id = this.getNodeParameter('itemId', itemIndex, '') as string;
+					   options = {
+						   method: 'GET',
+						   url: `${baseUrl}/${itemtype}${id ? '/' + id : ''}`,
+						   headers,
+						   json: true,
+						   timeout: 30000, // 30 segundos
+					   };
+					   // Debug: log da requisição
+					   this.helpers?.log?.debug?.(`GLPI GET request: ${options.url}`);
 				} else if (normalizedOperation === 'create') {
 					const input: IDataObject = {};
 					if (resource === 'Assistance Management') {
@@ -459,6 +462,34 @@ export class GlpiV2 implements INodeType {
 
 				   try {
 					   const response = await this.helpers.httpRequest(options);
+					   // Verificação explícita do status HTTP (caso a lib retorne status)
+					   if (response && typeof response === 'object' && 'status' in response && (response.status < 200 || response.status >= 300)) {
+						   const errorDetails = {
+							   message: `HTTP error: ${response.status} ${response.statusText || ''}`,
+							   request: {
+								   method: options.method,
+								   url: options.url,
+								   headers: options.headers,
+								   body: options.body,
+							   },
+							   response: {
+								   status: response.status,
+								   statusText: response.statusText,
+								   body: response.body,
+							   },
+						   };
+						   if (this.continueOnFail()) {
+							   returnData.push({
+								   json: { error: errorDetails },
+								   pairedItem: { item: itemIndex },
+							   });
+						   } else {
+							   throw new NodeOperationError(this.getNode(), errorDetails, {
+								   itemIndex,
+							   });
+						   }
+						   continue;
+					   }
 					   returnData.push({
 						   json: response,
 						   pairedItem: { item: itemIndex },
@@ -484,6 +515,19 @@ export class GlpiV2 implements INodeType {
 								   body: error.response?.body,
 							   },
 						   };
+						   // Se o body da resposta for um JSON com status/title/detail, inclui esses campos no erro principal
+						   if (error.response?.body && typeof error.response.body === 'object') {
+							   if (error.response.body.status || error.response.body.title || error.response.body.detail) {
+								   errorDetails = {
+									   ...errorDetails,
+									   glpiError: {
+										   status: error.response.body.status,
+										   title: error.response.body.title,
+										   detail: error.response.body.detail,
+									   },
+								   };
+							   }
+						   }
 					   }
 					   if (this.continueOnFail()) {
 						   returnData.push({
