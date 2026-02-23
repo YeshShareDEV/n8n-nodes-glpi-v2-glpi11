@@ -144,8 +144,11 @@ export class GlpiV2 implements INodeType {
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
 		const items = this.getInputData();
 		const returnData: INodeExecutionData[] = [];
+
+		const creds = await this.getCredentials('glpiV2Api');
+
 		for (let itemIndex = 0; itemIndex < items.length; itemIndex++) {
-			// Skip any HTTP requests — only display the configured credentials.
+			// Only display configured credentials; do not perform any HTTP requests.
 			returnData.push({
 				json: {
 					host: creds.host,
@@ -158,15 +161,7 @@ export class GlpiV2 implements INodeType {
 				pairedItem: { item: itemIndex },
 			});
 		}
-		return [returnData];
-					});
-				} else {
-					throw new NodeOperationError(this.getNode(), error, {
-						itemIndex,
-					});
-				}
-			}
-		}
+
 		return [returnData];
 	}
 }
