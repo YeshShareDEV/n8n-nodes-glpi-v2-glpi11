@@ -1,13 +1,10 @@
 import type {
-	IExecuteFunctions,
-	INodeExecutionData,
-	INodeType,
-	INodeTypeDescription,
-	IHttpRequestMethods,
-	IHttpRequestOptions,
-	IDataObject,
+  IExecuteFunctions,
+  INodeExecutionData,
+  INodeType,
+  INodeTypeDescription,
 } from 'n8n-workflow';
-import { NodeConnectionTypes, NodeOperationError, ApplicationError } from 'n8n-workflow';
+import { NodeConnectionTypes, ApplicationError } from 'n8n-workflow';
 import { assistanceManagementDescription } from './resources/Assistance Management';
 import { administrationManagementDescription } from './resources/Administration Management';
 import { AssetManagementDescription } from './resources/Asset Management';
@@ -146,7 +143,7 @@ export class GlpiV2 implements INodeType {
 		}
 
 		// 🔐 Login OAuth2 (uma vez por execução)
-		const sessionToken = await getOAuthToken.call(
+		await getOAuthToken.call(
 			this,
 			baseUrl,
 			creds.clientId as string,
@@ -156,10 +153,10 @@ export class GlpiV2 implements INodeType {
 		);
 
 		// Headers para todas as requisições posteriores
-		   const headers = {
-			   'Authorization': `Bearer ${sessionToken}`,
-			   'Content-Type': 'application/json',
-		   };
+		// const headers = {
+		//   'Authorization': `Bearer ${sessionToken}`,
+		//   'Content-Type': 'application/json',
+		// };
 
 		for (let itemIndex = 0; itemIndex < items.length; itemIndex++) {
 			try {
