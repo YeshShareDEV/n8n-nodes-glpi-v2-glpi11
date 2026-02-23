@@ -3,11 +3,8 @@ import type {
 	INodeExecutionData,
 	INodeType,
 	INodeTypeDescription,
-	IHttpRequestMethods,
-	IHttpRequestOptions,
-	IDataObject,
 } from 'n8n-workflow';
-import { NodeConnectionTypes, NodeOperationError, ApplicationError, LoggerProxy } from 'n8n-workflow';
+import { NodeConnectionTypes } from 'n8n-workflow';
 import { assistanceManagementDescription } from './resources/Assistance Management';
 import { administrationManagementDescription } from './resources/Administration Management';
 import { AssetManagementDescription } from './resources/Asset Management';
@@ -16,58 +13,7 @@ import { otherActionsDescription } from './resources/Other Actions';
 import { toolManagementDescription } from './resources/Tool Management';
 import { setupManagementDescription } from './resources/Setup Management';
 
-// 🔐 Função utilitária para obter token OAuth
-// O endpoint /api.php/token retorna o session_token (ou access_token que funciona como tal)
-async function getOAuthToken(
-	this: IExecuteFunctions,
-	baseUrl: string,
-	clientId: string,
-	clientSecret: string,
-	username: string,
-	password: string,
-	scope?: string,
-): Promise<string> {
-	try {
-		const response = await this.helpers.httpRequest({
-			method: 'POST',
-			url: `${baseUrl}/token`,
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: {
-				grant_type: 'password',
-				client_id: clientId,
-				client_secret: clientSecret,
-				username,
-				password,
-				scope,
-			},
-			json: true,
-		});
-
-		// Na V2 o retorno costuma ser { session_token: "..." } ou { access_token: "..." }
-		// Ajustar conforme o retorno real da API V2 do GLPI
-		const token = response?.session_token || response?.access_token;
-
-		if (!token) {
-			throw new ApplicationError('Failed to login to GLPI: session_token/access_token not found in response', {
-				level: 'warning',
-			});
-		}
-
-		return token;
-	} catch (error) {
-		if (error && typeof error === 'object' && 'response' in error) {
-			const httpError = error as { response: { status: number; statusText: string } };
-			throw new ApplicationError(
-				`Failed to login to GLPI: ${httpError.response.status} ${httpError.response.statusText}. Check your credentials and URL.`,
-				{ level: 'error' },
-			);
-		}
-		const errorMessage = error instanceof Error ? error.message : String(error);
-		throw new ApplicationError(`Failed to login to GLPI: ${errorMessage}`, { level: 'error' });
-	}
-}
+// Note: HTTP/token functions removed — this node only exposes credentials now.
 
 export class GlpiV2 implements INodeType {
 	description: INodeTypeDescription = {
