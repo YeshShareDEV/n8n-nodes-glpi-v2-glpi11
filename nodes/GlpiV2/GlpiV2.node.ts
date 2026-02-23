@@ -7,7 +7,7 @@ import type {
 	IHttpRequestOptions,
 	IDataObject,
 } from 'n8n-workflow';
-import { NodeConnectionTypes, NodeOperationError, ApplicationError } from 'n8n-workflow';
+import { NodeConnectionTypes, NodeOperationError, ApplicationError, LoggerProxy } from 'n8n-workflow';
 import { assistanceManagementDescription } from './resources/Assistance Management';
 import { administrationManagementDescription } from './resources/Administration Management';
 import { AssetManagementDescription } from './resources/Asset Management';
@@ -147,7 +147,10 @@ export class GlpiV2 implements INodeType {
 			baseUrl = baseUrl.replace(/\/+$/, '') + '/api.php';
 		}
 
-		// 🔐 Login OAuth2 (uma vez por execução)
+		LoggerProxy.debug('🔐 Iniciando autenticação OAuth2...');
+		LoggerProxy.debug(`baseUrl: ${baseUrl}`);
+		LoggerProxy.debug(`clientId: ${creds.clientId}`);
+
 		const sessionToken = await getOAuthToken.call(
 			this,
 			baseUrl,
@@ -157,6 +160,8 @@ export class GlpiV2 implements INodeType {
 			creds.password as string,
 			(creds.scope as string) || undefined,
 		);
+
+		LoggerProxy.debug(`✅ Token obtido: ${sessionToken ? sessionToken.substring(0, 20) + '...' : 'undefined'}`);
 
 		// Headers para todas as requisições posteriores (usar autenticação do arquivo novo)
 		const headers = {
