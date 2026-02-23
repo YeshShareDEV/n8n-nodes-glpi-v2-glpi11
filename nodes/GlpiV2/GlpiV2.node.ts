@@ -124,6 +124,13 @@ export class GlpiV2 implements INodeType {
 				],
 				default: 'Assistance Management',
 			},
+			{
+				displayName: 'Show Credentials Only',
+				name: 'showCredentials',
+				type: 'boolean',
+				default: false,
+				description: 'If enabled, the node will output the configured credentials and skip any API requests.',
+			},
 			...assistanceManagementDescription,
 			...administrationManagementDescription,
 			...AssetManagementDescription,
@@ -147,32 +154,49 @@ export class GlpiV2 implements INodeType {
 			baseUrl = baseUrl.replace(/\/+$/, '') + '/api.php';
 		}
 
-		LoggerProxy.debug('🔐 Iniciando autenticação OAuth2...');
+		let sessionToken: string | undefined;
 		LoggerProxy.debug(`baseUrl: ${baseUrl}`);
 		LoggerProxy.debug(`clientId: ${creds.clientId}`);
-
-		const sessionToken = await getOAuthToken.call(
-			this,
-			baseUrl,
-			creds.clientId as string,
-			creds.clientSecret as string,
-			creds.username as string,
-			creds.password as string,
-			(creds.scope as string) || undefined,
-		);
-
-		LoggerProxy.debug(`✅ Token obtido: ${sessionToken ? sessionToken.substring(0, 20) + '...' : 'undefined'}`);
-
-		// Headers para todas as requisições posteriores (usar autenticação do arquivo novo)
-		const headers = {
-			'Authorization': `Bearer ${sessionToken}`,
-			'Content-Type': 'application/json',
-		};
 
 		for (let itemIndex = 0; itemIndex < items.length; itemIndex++) {
 			try {
 				const resource = this.getNodeParameter('resource', itemIndex) as string;
 				const operation = this.getNodeParameter('operation', itemIndex) as string;
+
+				const showCredentialsOnly = this.getNodeParameter('showCredentials', itemIndex, false) as boolean;
+				if (showCredentialsOnly) {
+					returnData.push({
+						json: {
+							host: creds.host,
+							clientId: creds.clientId,
+							clientSecret: creds.clientSecret,
+							username: creds.username,
+							password: creds.password,
+							scope: creds.scope,
+						},
+						pairedItem: { item: itemIndex },
+					});
+					continue;
+				}
+
+				if (!sessionToken) {
+					LoggerProxy.debug('🔐 Iniciando autenticação OAuth2...');
+					sessionToken = await getOAuthToken.call(
+						this,
+						baseUrl,
+						creds.clientId as string,
+						creds.clientSecret as string,
+						creds.username as string,
+						creds.password as string,
+						(creds.scope as string) || undefined,
+					);
+					LoggerProxy.debug(`✅ Token obtido: ${sessionToken ? sessionToken.substring(0, 20) + '...' : 'undefined'}`);
+				}
+
+				const headers = {
+					'Authorization': `Bearer ${sessionToken}`,
+					'Content-Type': 'application/json',
+				};
 
 				// Determina o itemtype baseado no resource e operation
 				let itemtype: string;
