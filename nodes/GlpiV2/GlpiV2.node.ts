@@ -143,7 +143,7 @@ export class GlpiV2 implements INodeType {
 		}
 
 		// 🔐 Login OAuth2 (uma vez por execução)
-		await getOAuthToken.call(
+		const sessionToken = await getOAuthToken.call(
 			this,
 			baseUrl,
 			creds.clientId as string,
@@ -151,6 +151,26 @@ export class GlpiV2 implements INodeType {
 			creds.username as string,
 			creds.password as string,
 		);
+
+		// Exemplo: chamada GET ao endpoint /initSession para debug
+		let debugResponse = null;
+		let debugError = null;
+		try {
+			debugResponse = await this.helpers.httpRequest({
+				method: 'GET',
+				url: `${baseUrl}/initSession`,
+				headers: {
+					'Authorization': `Bearer ${sessionToken}`,
+					'Content-Type': 'application/json',
+				},
+				json: true,
+			});
+		} catch (err) {
+			debugError = err instanceof Error ? err.message : String(err);
+		}
+
+		// Retorna a resposta bruta e o erro (se houver) no output do node
+		return [[{ json: { debugResponse, debugError } }]];
 
 		// Headers para todas as requisições posteriores
 		// const headers = {
