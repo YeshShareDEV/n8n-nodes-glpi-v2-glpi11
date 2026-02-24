@@ -555,37 +555,10 @@ export class GlpiV2 implements INodeType {
 						pairedItem: { item: itemIndex },
 					});
 				} else {
-					// Build a curl command representing the prepared request (do not execute)
-					const method = (options.method || 'GET') as string;
-					const url = options.url as string;
-					const headersObj: { [k: string]: string } = (options.headers || {}) as { [k: string]: string };
-
-					let curl = `curl -s -X ${method} '${url}'`;
-					for (const headerName of Object.keys(headersObj)) {
-						const headerVal = String(headersObj[headerName] ?? '');
-						// escape single quotes for shell
-						const safeVal = headerVal.replace(/'/g, "'" + `"'"` + "'");
-						curl += ` -H '${headerName}: ${safeVal}'`;
-					}
-
-					if (options.body !== undefined) {
-						const bodyStr = typeof options.body === 'string' ? options.body : JSON.stringify(options.body);
-						const safeBody = bodyStr.replace(/'/g, "'" + `"'"` + "'");
-						curl += ` --data-raw '${safeBody}'`;
-					}
-
+					// Execute the prepared request and return the response
+					const response = await this.helpers.httpRequest(options as any);
 					returnData.push({
-						json: {
-							host: creds.host,
-							baseUrl,
-							clientId: creds.clientId,
-							clientSecret: creds.clientSecret,
-							username: creds.username,
-							password: creds.password,
-							scope: creds.scope,
-							curl,
-							options,
-						},
+						json: response,
 						pairedItem: { item: itemIndex },
 					});
 				}
