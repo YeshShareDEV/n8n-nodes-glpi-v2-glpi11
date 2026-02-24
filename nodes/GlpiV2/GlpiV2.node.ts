@@ -19,21 +19,95 @@ import { setupManagementDescription } from './resources/Setup Management';
 // Garante e normaliza a base URL terminando em /api.php
 function buildBaseUrl(host?: string) {
 	let baseUrl = (host || '').trim();
-	baseUrl = baseUrl.replace(/\/apirest\.php\/?$/i, '');
 
-	if (!/^https?:\/\//i.test(baseUrl) && baseUrl.length > 0) {
+	if (baseUrl.length === 0) return '';
+
+	// Ensure scheme for URL parsing
+	if (!/^https?:\/\//i.test(baseUrl)) {
 		baseUrl = `https://${baseUrl}`;
 	}
 
-	baseUrl = baseUrl.replace(/\/+$/g, '');
-	if (!baseUrl.endsWith('/api.php')) {
-		baseUrl = `${baseUrl}/api.php`;
-	}
+	try {
+		// Avoid relying on the global URL constructor or require('url') to keep
+		// TypeScript builds portable. Parse origin and path with regex.
+		const originMatch = baseUrl.match(/^(https?:\/\/[^\/]+)/i);
+		const origin = originMatch ? originMatch[1] : '';
 
-	return baseUrl;
+		// Find /api.php or /apirest.php in the provided URL (case-insensitive)
+		const apiMatch = baseUrl.match(/\/(?:apirest|api)\.php/i);
+		if (origin) {
+			if (apiMatch) {
+				return `${origin}${apiMatch[0]}`;
+			}
+			return `${origin}/api.php`;
+		}
+
+		// If we couldn't extract origin, fall back to a safe heuristic
+		baseUrl = baseUrl.replace(/\/apirest\.php\/?/i, '');
+		baseUrl = baseUrl.replace(/\/+$/g, '');
+		if (!baseUrl.endsWith('/api.php')) {
+			baseUrl = `${baseUrl}/api.php`;
+		}
+		return baseUrl;
+	} catch (e) {
+		baseUrl = baseUrl.replace(/\/apirest\.php\/?/i, '');
+		baseUrl = baseUrl.replace(/\/+$/g, '');
+		if (!baseUrl.endsWith('/api.php')) {
+			baseUrl = `${baseUrl}/api.php`;
+		}
+		return baseUrl;
+	}
 }
 
-// (getOAuthToken removed — node operates in build-only mode returning request options)
+// Faz a solicitação do token (login) por password grant
+async function getOAuthToken(
+	this: IExecuteFunctions,
+	baseUrl: string,
+	clientId: string,
+	clientSecret: string,
+	username: string,
+	password: string,
+	scope?: string,
+): Promise<string> {
+	try {
+		const response = await this.helpers.httpRequest({
+			method: 'POST',
+			url: `${baseUrl}/token`,
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: {
+				grant_type: 'password',
+				client_id: clientId,
+				client_secret: clientSecret,
+				username,
+				password,
+				scope,
+			},
+			json: true,
+		});
+
+		const token = response?.session_token || response?.access_token;
+
+		if (!token) {
+			throw new ApplicationError('Failed to login to GLPI: session_token/access_token not found in response', {
+				level: 'warning',
+			});
+		}
+
+		return token;
+	} catch (error) {
+		if (error && typeof error === 'object' && 'response' in error) {
+			const httpError = error as { response: { status: number; statusText: string } };
+			throw new ApplicationError(
+				`Failed to login to GLPI: ${httpError.response.status} ${httpError.response.statusText}. Check your credentials and URL.`,
+				{ level: 'error' },
+			);
+		}
+		const errorMessage = error instanceof Error ? error.message : String(error);
+		throw new ApplicationError(`Failed to login to GLPI: ${errorMessage}`, { level: 'error' });
+	}
+}
 
 export class GlpiV2 implements INodeType {
 	description: INodeTypeDescription = {
@@ -151,6 +225,22 @@ export class GlpiV2 implements INodeType {
 					itemtype = (this.getNodeParameter('itemtype', itemIndex) as string) || '';
 				}
 
+				// Normalize itemtype by prefixing with a resource-specific segment when needed.
+				// Example: 'Assistance Management' -> 'Assistance/Ticket'
+				const resourcePrefixMap: Record<string, string> = {
+					'Assistance Management': 'Assistance',
+					'Administration Management': 'Administration',
+					'Asset Management': 'Asset',
+					'Management': 'Management',
+					'Other Actions': 'Other',
+					'Setup Management': 'Setup',
+					'Tool Management': 'Tool',
+				};
+
+				if (itemtype && resourcePrefixMap[resource] && !itemtype.includes('/')) {
+					itemtype = `${resourcePrefixMap[resource]}/${itemtype}`;
+				}
+
 				let options: IHttpRequestOptions;
 
 				// Normaliza a operation para get/create/update
@@ -163,9 +253,30 @@ export class GlpiV2 implements INodeType {
 					normalizedOperation = 'update';
 				}
 
+				let token = '';
+				try {
+					token = await getOAuthToken.call(
+						this,
+						baseUrl,
+						creds.clientId as string,
+						creds.clientSecret as string,
+						creds.username as string,
+						creds.password as string,
+						(creds.scope as string) || undefined,
+					);
+				} catch (err) {
+					if (this.continueOnFail()) {
+						returnData.push({
+							json: { error: err instanceof Error ? err.message : String(err) },
+							pairedItem: { item: itemIndex },
+						});
+						continue;
+					}
+					throw err;
+				}
+
 				const headers: { [key: string]: string } = {
-					Authorization: `Bearer ${'' /* token not fetched in this mode */}`,
-					'Content-Type': 'application/json',
+					Authorization: `Bearer ${token}`,
 				};
 
 				if (normalizedOperation === 'get') {
@@ -395,9 +506,13 @@ export class GlpiV2 implements INodeType {
 						});
 					}
 
+					// Ensure there's exactly one slash between baseUrl and endpoint
+					const normalizedBase = (baseUrl || '').replace(/\/+$/, '');
+					const normalizedEndpoint = endpoint || '';
+					const joiner = normalizedEndpoint.startsWith('/') ? '' : '/';
 					options = {
 						method: method as IHttpRequestMethods,
-						url: `${baseUrl}${endpoint}`,
+						url: `${normalizedBase}${joiner}${normalizedEndpoint}`,
 						headers: {
 							...headers,
 							...customHeaders,
@@ -416,19 +531,64 @@ export class GlpiV2 implements INodeType {
 					throw new ApplicationError(`Unknown operation: ${operation}`, { level: 'warning' });
 				}
 
-				returnData.push({
-					json: {
-						host: creds.host,
-						baseUrl,
-						clientId: creds.clientId,
-						clientSecret: creds.clientSecret,
-						username: creds.username,
-						password: creds.password,
-						scope: creds.scope,
-						options,
-					},
-					pairedItem: { item: itemIndex },
-				});
+				const showCredentials = this.getNodeParameter('showCredentials', itemIndex, false) as boolean;
+
+				// ensure Content-Type only when body is present
+				if (options && (options as IHttpRequestOptions).body !== undefined) {
+					options.headers = {
+						...(options.headers || {}),
+						'Content-Type': 'application/json',
+					};
+				}
+
+				if (showCredentials) {
+					returnData.push({
+						json: {
+							host: creds.host,
+							baseUrl,
+							clientId: creds.clientId,
+							clientSecret: creds.clientSecret,
+							username: creds.username,
+							password: creds.password,
+							scope: creds.scope,
+						},
+						pairedItem: { item: itemIndex },
+					});
+				} else {
+					// Build a curl command representing the prepared request (do not execute)
+					const method = (options.method || 'GET') as string;
+					const url = options.url as string;
+					const headersObj: { [k: string]: string } = (options.headers || {}) as { [k: string]: string };
+
+					let curl = `curl -s -X ${method} '${url}'`;
+					for (const headerName of Object.keys(headersObj)) {
+						const headerVal = String(headersObj[headerName] ?? '');
+						// escape single quotes for shell
+						const safeVal = headerVal.replace(/'/g, "'" + `"'"` + "'");
+						curl += ` -H '${headerName}: ${safeVal}'`;
+					}
+
+					if (options.body !== undefined) {
+						const bodyStr = typeof options.body === 'string' ? options.body : JSON.stringify(options.body);
+						const safeBody = bodyStr.replace(/'/g, "'" + `"'"` + "'");
+						curl += ` --data-raw '${safeBody}'`;
+					}
+
+					returnData.push({
+						json: {
+							host: creds.host,
+							baseUrl,
+							clientId: creds.clientId,
+							clientSecret: creds.clientSecret,
+							username: creds.username,
+							password: creds.password,
+							scope: creds.scope,
+							curl,
+							options,
+						},
+						pairedItem: { item: itemIndex },
+					});
+				}
 			} catch (error) {
 				if (this.continueOnFail()) {
 					returnData.push({
