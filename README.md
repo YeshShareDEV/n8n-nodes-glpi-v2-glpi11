@@ -1,6 +1,6 @@
 # n8n-nodes-glpi-v2-glpi11
 
-![n8n](https://img.shields.io/badge/n8n-community-orange) ![GLPI](https://img.shields.io/badge/GLPI-REST%20API-blue)
+![version](https://img.shields.io/badge/version-2.0.12.13-blue) ![n8n](https://img.shields.io/badge/n8n-community-orange) ![GLPI](https://img.shields.io/badge/GLPI-REST%20API-blue)
 
 Node para integração do [GLPI](https://glpi-project.org/) com o [n8n](https://n8n.io/), compatível com a API REST V2 do GLPI.
 
