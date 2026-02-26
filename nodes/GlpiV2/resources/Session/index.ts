@@ -43,6 +43,3 @@ export const sessionDescription: INodeProperties[] = [
   ...sessionGetDescription,
   ...sessionOptionsDescription,
 ];
-import type { INodeProperties } from 'n8n-workflow';
-
-export const sessionDescription: INodeProperties[] = [];

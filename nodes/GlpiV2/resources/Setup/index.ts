@@ -149,6 +149,3 @@ export const setupDescription: INodeProperties[] = [
   ...setupDeleteDescription,
   ...setupOptionsDescription,
 ];
-import type { INodeProperties } from 'n8n-workflow';
-
-export const setupDescription: INodeProperties[] = [];

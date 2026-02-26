@@ -44,6 +44,7 @@ export const dropdownsDescription: INodeProperties[] = [
 		typeOptions: { minValue: 1 },
 		displayOptions: { show: { operation: ['get', 'update', 'delete'], resource: ['Dropdowns'] } },
 		description: 'ID of the dropdown entry',
+		default: 0,
 	},
 	{
 		displayName: 'Return All',

@@ -52,6 +52,7 @@ export const managementDescription: INodeProperties[] = [
 		typeOptions: { minValue: 1 },
 		displayOptions: { show: { operation: ['get', 'update', 'delete'], resource: ['Management'] } },
 		description: 'ID do item quando aplicável',
+		default: 0,
 	},
 	{
 		displayName: 'Return All',

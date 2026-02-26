@@ -61,6 +61,3 @@ export const statusDescription: INodeProperties[] = [
   ...statusGetDescription,
   ...statusOptionsDescription,
 ];
-import type { INodeProperties } from 'n8n-workflow';
-
-export const statusDescription: INodeProperties[] = [];

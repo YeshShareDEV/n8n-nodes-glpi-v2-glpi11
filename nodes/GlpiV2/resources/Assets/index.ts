@@ -87,6 +87,7 @@ export const AssetsDescription: INodeProperties[] = [
 				resource: ['Assets'],
 			},
 		},
+		default: 0,
 		description: 'ID do item. Deixe vazio para listar todos (aplicável ao GET).',
 	},
 	{

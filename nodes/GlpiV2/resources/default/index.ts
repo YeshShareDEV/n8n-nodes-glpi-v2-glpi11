@@ -42,6 +42,7 @@ export const defaultDescription: INodeProperties[] = [
 		name: 'path',
 		type: 'string',
 		placeholder: 'e.g. Transfer or Setup/Options',
+		default: '',
 		displayOptions: { show: { operation: ['dynamic'], resource: ['Default'] } },
 		description: 'Path to append to /api.php (validate/sanitize before use)',
 	},
@@ -51,6 +52,7 @@ export const defaultDescription: INodeProperties[] = [
 		type: 'fixedCollection',
 		typeOptions: { multipleValues: true },
 		placeholder: 'Add header',
+		default: { header: [] },
 		displayOptions: { show: { operation: ['dynamic'], resource: ['Default'] } },
 		options: [
 			{

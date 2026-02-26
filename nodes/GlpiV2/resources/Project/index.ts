@@ -39,6 +39,7 @@ export const projectDescription: INodeProperties[] = [
 		typeOptions: { minValue: 1 },
 		displayOptions: { show: { operation: ['get', 'update', 'delete'], resource: ['Project'] } },
 		description: 'ID do item quando aplicável',
+		default: 0,
 	},
 	{
 		displayName: 'Return All',

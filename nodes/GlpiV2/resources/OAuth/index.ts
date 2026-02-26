@@ -23,6 +23,7 @@ export const oauthDescription: INodeProperties[] = [
     displayOptions: { show: showOnlyForOAuth },
     placeholder: 'Client ID (if not preconfigured in credentials)',
     description: 'OAuth2 Client Identifier',
+    default: '',
   },
   {
     displayName: 'Redirect URI',
@@ -31,6 +32,7 @@ export const oauthDescription: INodeProperties[] = [
     displayOptions: { show: showOnlyForOAuth },
     placeholder: 'https://yourapp.example/callback',
     description: 'Redirect URI registered in the OAuth client (required for browser flow)',
+    default: '',
   },
   {
     displayName: 'Scope',
@@ -39,6 +41,7 @@ export const oauthDescription: INodeProperties[] = [
     displayOptions: { show: showOnlyForOAuth },
     placeholder: 'scopes (space separated)',
     description: 'Optional scopes to request',
+    default: '',
   },
   {
     displayName: 'State',
@@ -46,6 +49,7 @@ export const oauthDescription: INodeProperties[] = [
     type: 'string',
     displayOptions: { show: showOnlyForOAuth },
     description: 'Optional state parameter for CSRF protection',
+    default: '',
   },
   {
     displayName: 'Open Authorization',
@@ -63,6 +67,7 @@ export const oauthDescription: INodeProperties[] = [
     displayOptions: { show: { operation: ['exchange'], resource: ['OAuth'] } },
     placeholder: 'Code returned after redirect',
     description: 'Paste or capture the authorization code after the redirect',
+    default: '',
   },
   {
     displayName: 'Exchange Code',

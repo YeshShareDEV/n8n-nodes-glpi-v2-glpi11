@@ -50,6 +50,7 @@ export const assistanceDescription: INodeProperties[] = [
 			show: { operation: ['get', 'update', 'delete'], resource: ['Assistance'] },
 		},
 		description: 'ID do item. Deixe vazio para listar todos (aplicável ao GET).',
+		default: 0,
 	},
 	{
 		displayName: 'Include Timeline',

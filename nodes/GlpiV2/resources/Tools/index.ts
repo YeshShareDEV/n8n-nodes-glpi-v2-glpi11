@@ -89,6 +89,3 @@ export const toolsDescription: INodeProperties[] = [
   ...toolsDeleteDescription,
   ...toolsOptionsDescription,
 ];
-import type { INodeProperties } from 'n8n-workflow';
-
-export const toolsDescription: INodeProperties[] = [];

@@ -26,6 +26,7 @@ export const graphQLDescription: INodeProperties[] = [
 		displayOptions: { show: { operation: ['execute'], resource: ['GraphQL'] } },
 		placeholder: '{\n  query: `query { ... }`\n}',
 		description: 'GraphQL query or mutation',
+		default: '',
 	},
 	{
 		displayName: 'Operation Name',
@@ -33,6 +34,7 @@ export const graphQLDescription: INodeProperties[] = [
 		type: 'string',
 		displayOptions: { show: { operation: ['execute'], resource: ['GraphQL'] } },
 		description: 'Optional operation name',
+		default: '',
 	},
 	{
 		displayName: 'Variables (JSON)',
