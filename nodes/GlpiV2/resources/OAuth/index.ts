@@ -1,8 +1,6 @@
 import type { INodeProperties } from 'n8n-workflow';
 
-const showOnlyForOAuth = {
-  resource: ['OAuth'],
-};
+const showOnlyForOAuth = { resource: ['OAuth'] };
 
 export const oauthDescription: INodeProperties[] = [
   {
@@ -12,17 +10,82 @@ export const oauthDescription: INodeProperties[] = [
     noDataExpression: true,
     displayOptions: { show: showOnlyForOAuth },
     options: [
-      { name: 'Authorize', value: 'authorize', action: 'Authorize' },
-      { name: 'Token', value: 'token', action: 'Token' },
+      { name: 'Open Authorization (Browser)', value: 'open', action: 'Open authorization URL' },
+      { name: 'Exchange Code', value: 'exchange', action: 'Exchange authorization code' },
+      { name: 'Server-side POST Authorize', value: 'post', action: 'POST authorize' },
     ],
-    default: 'authorize',
+    default: 'open',
   },
   {
-    displayName: 'Notice',
-    name: 'notice',
-    type: 'notice',
+    displayName: 'Client ID',
+    name: 'clientId',
+    type: 'string',
     displayOptions: { show: showOnlyForOAuth },
-    default: '',
-    description: 'Placeholder for /authorize and /token endpoints.',
+    placeholder: 'Client ID (if not preconfigured in credentials)',
+    description: 'OAuth2 Client Identifier',
+  },
+  {
+    displayName: 'Redirect URI',
+    name: 'redirectUri',
+    type: 'string',
+    displayOptions: { show: showOnlyForOAuth },
+    placeholder: 'https://yourapp.example/callback',
+    description: 'Redirect URI registered in the OAuth client (required for browser flow)',
+  },
+  {
+    displayName: 'Scope',
+    name: 'scope',
+    type: 'string',
+    displayOptions: { show: showOnlyForOAuth },
+    placeholder: 'scopes (space separated)',
+    description: 'Optional scopes to request',
+  },
+  {
+    displayName: 'State',
+    name: 'state',
+    type: 'string',
+    displayOptions: { show: showOnlyForOAuth },
+    description: 'Optional state parameter for CSRF protection',
+  },
+  {
+    displayName: 'Open Authorization',
+    name: 'openAuthorization',
+    type: 'boolean',
+    displayOptions: { show: { operation: ['open'], resource: ['OAuth'] } },
+    default: false,
+    description:
+      'Trigger to open the authorization URL (GET /api.php/authorize). In UI this should be an action/button that opens a browser window.',
+  },
+  {
+    displayName: 'Authorization Code',
+    name: 'authorizationCode',
+    type: 'string',
+    displayOptions: { show: { operation: ['exchange'], resource: ['OAuth'] } },
+    placeholder: 'Code returned after redirect',
+    description: 'Paste or capture the authorization code after the redirect',
+  },
+  {
+    displayName: 'Exchange Code',
+    name: 'exchangeCode',
+    type: 'boolean',
+    displayOptions: { show: { operation: ['exchange'], resource: ['OAuth'] } },
+    default: false,
+    description: 'Trigger to POST to /token to exchange the authorization code for a token',
+  },
+  {
+    displayName: 'POST Authorize (server-side)',
+    name: 'postAuthorize',
+    type: 'boolean',
+    displayOptions: { show: { operation: ['post'], resource: ['OAuth'] } },
+    default: false,
+    description: 'Trigger to perform server-side POST /api.php/authorize when using non-interactive flow',
+  },
+  {
+    displayName: 'Validate Redirect State',
+    name: 'validateState',
+    type: 'boolean',
+    displayOptions: { show: showOnlyForOAuth },
+    default: true,
+    description: 'When true, validate that the returned state matches the request',
   },
 ];

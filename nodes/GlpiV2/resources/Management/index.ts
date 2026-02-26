@@ -5,9 +5,7 @@ import { managementUpdateDescription } from './update';
 import { managementDeleteDescription } from './delete';
 import { managementOptionsDescription } from './options';
 
-const showOnlyForManagement = {
-	resource: ['Management'],
-};
+const showOnlyForManagement = { resource: ['Management'] };
 
 export const managementDescription: INodeProperties[] = [
 	{
@@ -15,64 +13,61 @@ export const managementDescription: INodeProperties[] = [
 		name: 'operation',
 		type: 'options',
 		noDataExpression: true,
-		displayOptions: {
-			show: showOnlyForManagement,
-		},
+		displayOptions: { show: showOnlyForManagement },
 		options: [
-			// {
-			// 	name: 'Create an Administration Item',
-			// 	value: 'create',
-			// 	action: 'Create a new administration item',
-			// 	description: 'Create a new administration item',
-			// },
-			{
-				name: 'Get an Administration Item',
-				value: 'get',
-				action: 'Get an administration item',
-				description: 'Get the data of a single administration item',
-			},
-			// {
-			// 	name: 'Update an Administration Item',
-			// 	value: 'update',
-			// 	action: 'Update an administration item',
-			// 	description: 'Update an existing administration item',
-			// },
-			{
-				name: 'Delete an Administration Item',
-				value: 'delete',
-				action: 'Delete an administration item',
-			},
+			{ name: 'Get', value: 'get', action: 'Get an item' },
+			{ name: 'Create', value: 'create', action: 'Create an item' },
+			{ name: 'Update', value: 'update', action: 'Update an item' },
+			{ name: 'Delete', value: 'delete', action: 'Delete an item' },
 		],
 		default: 'get',
 	},
 	{
-		displayName: 'Item Type',
-		name: 'itemtype',
+		displayName: 'Sub-resource',
+		name: 'subresource',
 		type: 'options',
-		displayOptions: {
-			show: showOnlyForManagement,
-		},
-        options: [
-            { name: 'Appliance', value: 'Appliance' },
-            { name: 'Budget', value: 'Budget' },
-            { name: 'Certificate', value: 'Certificate' },
-            { name: 'Cluster', value: 'Cluster' },
-            { name: 'Contact', value: 'Contact' },
-            { name: 'Contract', value: 'Contract' },
-            { name: 'Data Center', value: 'Datacenter' },
-            { name: 'Data Center Room', value: 'DCRoom' },
-            { name: 'Database', value: 'Database' },
-            { name: 'Database Instance', value: 'DatabaseInstance' },
-            { name: 'Document', value: 'Document' },
-            { name: 'Domain', value: 'Domain' },
-            { name: 'Domain Record', value: 'DomainRecord' },
-            { name: 'License', value: 'SoftwareLicense' },
-            { name: 'Phone Line', value: 'Line' },
-            { name: 'Supplier', value: 'Supplier' },
-        ],
-		default: 'SoftwareLicense',
+		displayOptions: { show: showOnlyForManagement },
+		options: [
+			{ name: 'Budget', value: 'Budget' },
+			{ name: 'Cluster', value: 'Cluster' },
+			{ name: 'Contact', value: 'Contact' },
+			{ name: 'Contract', value: 'Contract' },
+			{ name: 'DataCenter', value: 'DataCenter' },
+			{ name: 'Database', value: 'Database' },
+			{ name: 'Document', value: 'Document' },
+			{ name: 'Domain', value: 'Domain' },
+			{ name: 'License', value: 'License' },
+			{ name: 'Line', value: 'Line' },
+			{ name: 'Supplier', value: 'Supplier' },
+		],
+		default: 'Contact',
 		required: true,
-		description: 'Type of administration item',
+		description: 'Sub-resource of Management',
+	},
+	{
+		displayName: 'Item ID',
+		name: 'itemid',
+		type: 'number',
+		placeholder: 'Deixe vazio para listar todos',
+		typeOptions: { minValue: 1 },
+		displayOptions: { show: { operation: ['get', 'update', 'delete'], resource: ['Management'] } },
+		description: 'ID do item quando aplicável',
+	},
+	{
+		displayName: 'Return All',
+		name: 'returnAll',
+		type: 'boolean',
+		displayOptions: { show: { operation: ['get'], resource: ['Management'] } },
+		default: false,
+	},
+	{
+		displayName: 'Limit',
+		name: 'limit',
+		type: 'number',
+		default: 50,
+		typeOptions: { minValue: 1 },
+		displayOptions: { show: { operation: ['get'], returnAll: [false], resource: ['Management'] } },
+		description: 'Limite de itens retornados quando Return All for false',
 	},
 	...managementGetDescription,
 	...managementCreateDescription,
@@ -80,4 +75,3 @@ export const managementDescription: INodeProperties[] = [
 	...managementDeleteDescription,
 	...managementOptionsDescription,
 ];
-

@@ -25,7 +25,11 @@
 		"dev": "n8n-node dev",
 		"lint": "n8n-node lint",
 		"lint:fix": "n8n-node lint --fix",
-		"release": "n8n-node release"
+		"release": "n8n-node release",
+		"ver:rc": "npm version prerelease --preid=rc -m \"chore(release): %s\" && git push --follow-tags",
+		"ver:patch": "npm version patch -m \"chore(release): %s\" && git push --follow-tags",
+		"ver:minor": "npm version minor -m \"chore(release): %s\" && git push --follow-tags",
+		"ver:major": "npm version major -m \"chore(release): %s\" && git push --follow-tags"
 	},
 	"files": [
 		"dist"

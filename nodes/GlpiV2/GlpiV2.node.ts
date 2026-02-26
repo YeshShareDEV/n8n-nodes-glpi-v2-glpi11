@@ -8,13 +8,7 @@ import type {
 	IDataObject,
 } from 'n8n-workflow';
 import { NodeConnectionTypes, ApplicationError, NodeOperationError } from 'n8n-workflow';
-import { assistanceManagementDescription } from './resources/Assistance Management';
-import { administrationManagementDescription } from './resources/Administration Management';
-import { AssetManagementDescription } from './resources/Asset Management';
-import { managementDescription } from './resources/Management';
-import { otherActionsDescription } from './resources/Other Actions';
-import { toolManagementDescription } from './resources/Tool Management';
-import { setupManagementDescription } from './resources/Setup Management';
+import { AssetsDescription } from './resources/Assets';
 
 // Garante e normaliza a base URL terminando em /api.php
 function buildBaseUrl(host?: string) {
@@ -134,35 +128,11 @@ export class GlpiV2 implements INodeType {
 				noDataExpression: true,
 				options: [
 					{
-						name: 'Administration Management',
-						value: 'Administration Management',
-					},
-					{
-						name: 'Asset Management',
-						value: 'Asset Management',
-					},
-					{
-						name: 'Assistance Management',
-						value: 'Assistance Management',
-					},
-					{
-						name: 'Management',
-						value: 'Management',
-					},
-					{
-						name: 'Other Action',
-						value: 'Other Actions',
-					},
-					{
-						name: 'Setup Management',
-						value: 'Setup Management',
-					},
-					{
-						name: 'Tool Management',
-						value: 'Tool Management',
+						name: 'Assets',
+						value: 'Assets',
 					},
 				],
-				default: 'Assistance Management',
+				default: 'Assets',
 			},
 			{
 				displayName: 'Show Credentials Only',
@@ -171,13 +141,7 @@ export class GlpiV2 implements INodeType {
 				default: false,
 				description: 'If enabled, the node will output the configured credentials and skip any API requests.',
 			},
-			...assistanceManagementDescription,
-			...administrationManagementDescription,
-			...AssetManagementDescription,
-			...managementDescription,
-			...otherActionsDescription,
-			...toolManagementDescription,
-			...setupManagementDescription,
+			...AssetsDescription,
 		],
 	};
 
@@ -195,46 +159,12 @@ export class GlpiV2 implements INodeType {
 				const operation = this.getNodeParameter('operation', itemIndex) as string;
 
 				// Determina o itemtype baseado no resource e operation
-				let itemtype: string;
-				if (resource === 'Administration Management') {
-					if (
-						operation === 'getGroup' ||
-						operation === 'createGroup' ||
-						operation === 'updateGroup' ||
-						operation === 'deleteGroup'
-					) {
-						itemtype = 'Group';
-					} else if (
-						operation === 'getProfile' ||
-						operation === 'createProfile' ||
-						operation === 'updateProfile' ||
-						operation === 'deleteProfile'
-					) {
-						itemtype = 'Profile';
-					} else {
-						itemtype = 'User';
-					}
-				} else if (
-					resource === 'Asset Management' ||
-					resource === 'Management' ||
-					resource === 'Tool Management' ||
-					resource === 'Setup Management'
-				) {
-					itemtype = (this.getNodeParameter('itemtype', itemIndex) as string) || '';
-				} else {
-					itemtype = (this.getNodeParameter('itemtype', itemIndex) as string) || '';
-				}
+				const itemtype: string = (this.getNodeParameter('itemtype', itemIndex) as string) || '';
 
 				// Normalize itemtype by prefixing with a resource-specific segment when needed.
 				// Example: 'Assistance Management' -> 'Assistance/Ticket'
 				const resourcePrefixMap: Record<string, string> = {
-					'Assistance Management': 'Assistance',
-					'Administration Management': 'Administration',
-					'Asset Management': 'Asset',
-					'Management': 'Management',
-					'Other Actions': 'Other',
-					'Setup Management': 'Setup',
-					'Tool Management': 'Tool',
+					Assets: 'Assets',
 				};
 
 				if (itemtype && resourcePrefixMap[resource] && !itemtype.includes('/')) {
