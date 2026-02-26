@@ -561,7 +561,7 @@ export class GlpiV2 implements INodeType {
 			}
 		}
 
-		return returnData.map(item => [item]);
+		return returnData.length ? [returnData] : [];
 	}
 }
 
