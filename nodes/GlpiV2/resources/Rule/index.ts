@@ -54,6 +54,26 @@ export const ruleDescription: INodeProperties[] = [
     typeOptions: { minValue: 1 },
     displayOptions: { show: { resource: ['Rule'], operation: ['get'], returnAll: [false] } },
   },
+
+  {
+    displayName: 'Start',
+    name: 'start',
+    type: 'number',
+    default: 0,
+    typeOptions: { minValue: 0 },
+    displayOptions: { show: { resource: ['Rule'], operation: ['get'], returnAll: [false] } },
+    description: 'Offset inicial (start) para paginação',
+  },
+
+  {
+    displayName: 'Sort',
+    name: 'sort',
+    type: 'string',
+    default: '',
+    placeholder: 'e.g. id or name',
+    displayOptions: { show: { resource: ['Rule'], operation: ['get'], returnAll: [false] } },
+    description: 'Campo para ordenar os resultados (ex: id, name)',
+  },
   // CREATE/UPDATE: criteria and actions
   {
     displayName: 'Criteria',

@@ -82,6 +82,26 @@ export const setupDescription: INodeProperties[] = [
     displayOptions: { show: { operation: ['list'], returnAll: [false], resource: ['Setup'] } },
   },
 
+  {
+    displayName: 'Start',
+    name: 'start',
+    type: 'number',
+    default: 0,
+    typeOptions: { minValue: 0 },
+    displayOptions: { show: { operation: ['list'], returnAll: [false], resource: ['Setup'] } },
+    description: 'Offset inicial (start) para paginação',
+  },
+
+  {
+    displayName: 'Sort',
+    name: 'sort',
+    type: 'string',
+    default: '',
+    placeholder: 'e.g. id or name',
+    displayOptions: { show: { operation: ['list'], returnAll: [false], resource: ['Setup'] } },
+    description: 'Campo para ordenar os resultados (ex: id, name)',
+  },
+
   // Config create/update: key/value editor
   {
     displayName: 'Config Entries',

@@ -88,6 +88,24 @@ export const defaultDescription: INodeProperties[] = [
 		typeOptions: { minValue: 1 },
 		displayOptions: { show: { operation: ['dynamic'], returnAll: [false], resource: ['Default'] } },
 	},
+	{
+		displayName: 'Start',
+		name: 'start',
+		type: 'number',
+		default: 0,
+		typeOptions: { minValue: 0 },
+		displayOptions: { show: { operation: ['dynamic'], returnAll: [false], resource: ['Default'] } },
+		description: 'Offset inicial (start) para paginação',
+	},
+	{
+		displayName: 'Sort',
+		name: 'sort',
+		type: 'string',
+		default: '',
+		placeholder: 'e.g. id or name',
+		displayOptions: { show: { operation: ['dynamic'], returnAll: [false], resource: ['Default'] } },
+		description: 'Campo para ordenar os resultados (ex: id, name)',
+	},
 	// Transfer action convenience
 	{
 		displayName: 'Transfer Payload',

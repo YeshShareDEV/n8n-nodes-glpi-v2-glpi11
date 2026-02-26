@@ -62,6 +62,26 @@ export const toolsDescription: INodeProperties[] = [
     displayOptions: { show: { resource: ['Tools'], operation: ['get'], returnAll: [false] } },
   },
 
+  {
+    displayName: 'Start',
+    name: 'start',
+    type: 'number',
+    default: 0,
+    typeOptions: { minValue: 0 },
+    displayOptions: { show: { resource: ['Tools'], operation: ['get'], returnAll: [false] } },
+    description: 'Offset inicial (start) para paginação',
+  },
+
+  {
+    displayName: 'Sort',
+    name: 'sort',
+    type: 'string',
+    default: '',
+    placeholder: 'e.g. id or name',
+    displayOptions: { show: { resource: ['Tools'], operation: ['get'], returnAll: [false] } },
+    description: 'Campo para ordenar os resultados (ex: id, name)',
+  },
+
   // Create/Update fields: placeholder collection for tool-specific data
   {
     displayName: 'Tool Data',
