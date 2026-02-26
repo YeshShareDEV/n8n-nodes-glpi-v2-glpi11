@@ -8,13 +8,22 @@ import type {
 	IDataObject,
 } from 'n8n-workflow';
 import { NodeConnectionTypes, ApplicationError, NodeOperationError } from 'n8n-workflow';
-import { assistanceManagementDescription } from './resources/Assistance Management';
-import { administrationManagementDescription } from './resources/Administration Management';
-import { AssetManagementDescription } from './resources/Asset Management';
+import { administrationDescription } from './resources/Administration';
+import { AssetsDescription } from './resources/Assets';
+import { assistanceDescription } from './resources/Assistance';
+import { componentsDescription } from './resources/Components';
+import { customAssetsDescription } from './resources/Custom Assets';
+import { defaultDescription } from './resources/default';
+import { dropdownsDescription } from './resources/Dropdowns';
+import { graphQLDescription } from './resources/GraphQL';
 import { managementDescription } from './resources/Management';
-import { otherActionsDescription } from './resources/Other Actions';
-import { toolManagementDescription } from './resources/Tool Management';
-import { setupManagementDescription } from './resources/Setup Management';
+import { oauthDescription } from './resources/OAuth';
+import { projectDescription } from './resources/Project';
+import { ruleDescription } from './resources/Rule';
+import { sessionDescription } from './resources/Session';
+import { setupDescription } from './resources/Setup';
+import { statusDescription } from './resources/Status';
+import { toolsDescription } from './resources/Tools';
 
 // Garante e normaliza a base URL terminando em /api.php
 function buildBaseUrl(host?: string) {
@@ -133,36 +142,24 @@ export class GlpiV2 implements INodeType {
 				type: 'options',
 				noDataExpression: true,
 				options: [
-					{
-						name: 'Administration Management',
-						value: 'Administration Management',
-					},
-					{
-						name: 'Asset Management',
-						value: 'Asset Management',
-					},
-					{
-						name: 'Assistance Management',
-						value: 'Assistance Management',
-					},
-					{
-						name: 'Management',
-						value: 'Management',
-					},
-					{
-						name: 'Other Action',
-						value: 'Other Actions',
-					},
-					{
-						name: 'Setup Management',
-						value: 'Setup Management',
-					},
-					{
-						name: 'Tool Management',
-						value: 'Tool Management',
-					},
+					{ name: 'Administration', value: 'Administration' },
+					{ name: 'Assets', value: 'Assets' },
+					{ name: 'Assistance', value: 'Assistance' },
+					{ name: 'Components', value: 'Components' },
+					{ name: 'Custom Assets', value: 'Custom Assets' },
+					{ name: 'Default', value: 'Default' },
+					{ name: 'Dropdowns', value: 'Dropdowns' },
+					{ name: 'GraphQL', value: 'GraphQL' },
+					{ name: 'Management', value: 'Management' },
+					{ name: 'OAuth', value: 'OAuth' },
+					{ name: 'Project', value: 'Project' },
+					{ name: 'Rule', value: 'Rule' },
+					{ name: 'Session', value: 'Session' },
+					{ name: 'Setup', value: 'Setup' },
+					{ name: 'Status', value: 'Status' },
+					{ name: 'Tools', value: 'Tools' },
 				],
-				default: 'Assistance Management',
+				default: 'Assets',
 			},
 			{
 				displayName: 'Show Credentials Only',
@@ -171,13 +168,22 @@ export class GlpiV2 implements INodeType {
 				default: false,
 				description: 'If enabled, the node will output the configured credentials and skip any API requests.',
 			},
-			...assistanceManagementDescription,
-			...administrationManagementDescription,
-			...AssetManagementDescription,
+			...administrationDescription,
+			...AssetsDescription,
+			...assistanceDescription,
+			...componentsDescription,
+			...customAssetsDescription,
+			...defaultDescription,
+			...dropdownsDescription,
+			...graphQLDescription,
 			...managementDescription,
-			...otherActionsDescription,
-			...toolManagementDescription,
-			...setupManagementDescription,
+			...oauthDescription,
+			...projectDescription,
+			...ruleDescription,
+			...sessionDescription,
+			...setupDescription,
+			...statusDescription,
+			...toolsDescription,
 		],
 	};
 
@@ -195,46 +201,27 @@ export class GlpiV2 implements INodeType {
 				const operation = this.getNodeParameter('operation', itemIndex) as string;
 
 				// Determina o itemtype baseado no resource e operation
-				let itemtype: string;
-				if (resource === 'Administration Management') {
-					if (
-						operation === 'getGroup' ||
-						operation === 'createGroup' ||
-						operation === 'updateGroup' ||
-						operation === 'deleteGroup'
-					) {
-						itemtype = 'Group';
-					} else if (
-						operation === 'getProfile' ||
-						operation === 'createProfile' ||
-						operation === 'updateProfile' ||
-						operation === 'deleteProfile'
-					) {
-						itemtype = 'Profile';
-					} else {
-						itemtype = 'User';
-					}
-				} else if (
-					resource === 'Asset Management' ||
-					resource === 'Management' ||
-					resource === 'Tool Management' ||
-					resource === 'Setup Management'
-				) {
-					itemtype = (this.getNodeParameter('itemtype', itemIndex) as string) || '';
-				} else {
-					itemtype = (this.getNodeParameter('itemtype', itemIndex) as string) || '';
-				}
+				let itemtype: string = (this.getNodeParameter('itemtype', itemIndex) as string) || '';
 
 				// Normalize itemtype by prefixing with a resource-specific segment when needed.
 				// Example: 'Assistance Management' -> 'Assistance/Ticket'
 				const resourcePrefixMap: Record<string, string> = {
-					'Assistance Management': 'Assistance',
-					'Administration Management': 'Administration',
-					'Asset Management': 'Asset',
-					'Management': 'Management',
-					'Other Actions': 'Other',
-					'Setup Management': 'Setup',
-					'Tool Management': 'Tool',
+					Administration: 'Administration',
+					Assets: 'Assets',
+					Assistance: 'Assistance',
+					Components: 'Components',
+					'Custom Assets': 'Custom Assets',
+					Default: 'Default',
+					Dropdowns: 'Dropdowns',
+					GraphQL: 'GraphQL',
+					Management: 'Management',
+					OAuth: 'OAuth',
+					Project: 'Project',
+					Rule: 'Rule',
+					Session: 'Session',
+					Setup: 'Setup',
+					Status: 'Status',
+					Tools: 'Tools',
 				};
 
 				if (itemtype && resourcePrefixMap[resource] && !itemtype.includes('/')) {
@@ -280,7 +267,7 @@ export class GlpiV2 implements INodeType {
 				};
 
 				if (normalizedOperation === 'get') {
-					const id = this.getNodeParameter('itemId', itemIndex, '') as string;
+					const id = this.getNodeParameter('itemid', itemIndex, '') as string;
 					options = {
 						method: 'GET' as IHttpRequestMethods,
 						url: `${baseUrl}/${itemtype}${id ? '/' + id : ''}`,
@@ -289,7 +276,7 @@ export class GlpiV2 implements INodeType {
 					};
 				} else if (normalizedOperation === 'create') {
 					const input: IDataObject = {};
-					if (resource === 'Assistance Management') {
+					if (resource === 'Assistance') {
 						input.name = this.getNodeParameter('title', itemIndex) as string;
 						input.content = this.getNodeParameter('description', itemIndex) as string;
 						input.status = (this.getNodeParameter('status_ticket', itemIndex, 0) as number) ||
@@ -305,7 +292,7 @@ export class GlpiV2 implements INodeType {
 
 						const assign = this.getNodeParameter('users_id_assign', itemIndex, 0) as number;
 						if (assign) input._users_id_assign = assign;
-					} else if (resource === 'Administration Management' && itemtype === 'User') {
+					} else if (resource === 'Administration' && itemtype === 'User') {
 						input.name = this.getNodeParameter('name', itemIndex) as string;
 
 						const firstname = this.getNodeParameter('firstname', itemIndex, '') as string;
@@ -328,7 +315,7 @@ export class GlpiV2 implements INodeType {
 						if (optionsParam.phone) input.phone = optionsParam.phone;
 						if (optionsParam.mobile) input.mobile = optionsParam.mobile;
 						if (optionsParam.realname) input.realname = optionsParam.realname;
-					} else if (resource === 'Administration Management' && itemtype === 'Group') {
+					} else if (resource === 'Administration' && itemtype === 'Group') {
 						input.name = this.getNodeParameter('name', itemIndex) as string;
 						input.is_requester = this.getNodeParameter('is_requester', itemIndex, true) ? 1 : 0;
 						input.is_watcher = this.getNodeParameter('is_watcher', itemIndex, true) ? 1 : 0;
@@ -353,10 +340,10 @@ export class GlpiV2 implements INodeType {
 						json: true,
 					};
 				} else if (normalizedOperation === 'update') {
-					const id = this.getNodeParameter('itemId', itemIndex);
+					const id = this.getNodeParameter('itemid', itemIndex);
 					const input: IDataObject = {};
 
-					if (resource === 'Assistance Management') {
+					if (resource === 'Assistance') {
 						const title = this.getNodeParameter('title', itemIndex, '') as string;
 						if (title) input.name = title;
 
@@ -377,7 +364,7 @@ export class GlpiV2 implements INodeType {
 
 						const assign = this.getNodeParameter('users_id_assign', itemIndex, 0) as number;
 						if (assign) input._users_id_assign = assign;
-					} else if (resource === 'Administration Management') {
+					} else if (resource === 'Administration') {
 						if (itemtype === 'User') {
 							const name = this.getNodeParameter('name', itemIndex, '') as string;
 							if (name) input.name = name;
@@ -447,7 +434,7 @@ export class GlpiV2 implements INodeType {
 						headers,
 						body: {
 							input: {
-								items_id: this.getNodeParameter('itemId', itemIndex),
+								items_id: this.getNodeParameter('itemid', itemIndex),
 								itemtype,
 								content: this.getNodeParameter('comment', itemIndex),
 								is_private: this.getNodeParameter('isPrivate', itemIndex) ? 1 : 0,
@@ -456,7 +443,7 @@ export class GlpiV2 implements INodeType {
 						json: true,
 					};
 				} else if (operation === 'delete') {
-					const id = this.getNodeParameter('itemId', itemIndex);
+					const id = this.getNodeParameter('itemid', itemIndex);
 					options = {
 						method: 'DELETE' as IHttpRequestMethods,
 						url: `${baseUrl}/${itemtype}/${id}`,
@@ -468,7 +455,7 @@ export class GlpiV2 implements INodeType {
 					operation === 'deleteProfile' ||
 					operation === 'deleteUser'
 				) {
-					const id = this.getNodeParameter('itemId', itemIndex);
+					const id = this.getNodeParameter('itemid', itemIndex);
 					options = {
 						method: 'DELETE' as IHttpRequestMethods,
 						url: `${baseUrl}/${itemtype}/${id}`,
@@ -482,7 +469,7 @@ export class GlpiV2 implements INodeType {
 						headers,
 						body: {
 							input: {
-								items_id: this.getNodeParameter('itemId', itemIndex),
+								items_id: this.getNodeParameter('itemid', itemIndex),
 								itemtype,
 								content: this.getNodeParameter('content', itemIndex),
 								users_id: this.getNodeParameter('users_id', itemIndex),
@@ -556,11 +543,21 @@ export class GlpiV2 implements INodeType {
 					});
 				} else {
 					// Execute the prepared request and return the response
-					const response = await this.helpers.httpRequest(options as any);
-					returnData.push({
-						json: response,
-						pairedItem: { item: itemIndex },
-					});
+						const response = await this.helpers.httpRequest(options as any);
+						// If the API returned an array, push each element as a separate output row
+						if (Array.isArray(response)) {
+							for (const resItem of response) {
+								returnData.push({
+									json: resItem,
+									pairedItem: { item: itemIndex },
+								});
+							}
+						} else {
+							returnData.push({
+								json: response,
+								pairedItem: { item: itemIndex },
+							});
+						}
 				}
 			} catch (error) {
 				if (this.continueOnFail()) {
@@ -574,7 +571,7 @@ export class GlpiV2 implements INodeType {
 			}
 		}
 
-		return [returnData];
+		return returnData.length ? [returnData] : [];
 	}
 }
 
