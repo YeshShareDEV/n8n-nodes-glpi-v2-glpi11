@@ -272,11 +272,26 @@ export class GlpiV2 implements INodeType {
 				if (normalizedOperation === 'get') {
 					const id = this.getNodeParameter('itemid', itemIndex, '') as string;
 
-					// Build URL and apply limit query param when an ID is not requested
+					// Build URL and apply pagination/sort query params when an ID is not requested
 					let url = `${baseUrl}/${itemtype}${id ? '/' + id : ''}`;
 					if (!id && returnAll === false) {
+						const params: string[] = [];
 						const limit = this.getNodeParameter('limit', itemIndex, 50) as number;
-						url += (url.includes('?') ? '&' : '?') + `limit=${limit}`;
+						params.push(`limit=${limit}`);
+
+						const start = this.getNodeParameter('start', itemIndex, undefined) as number | undefined;
+						if (start !== undefined && start !== null) {
+							params.push(`start=${start}`);
+						}
+
+						const sort = this.getNodeParameter('sort', itemIndex, '') as string;
+						if (sort) {
+							params.push(`sort=${encodeURIComponent(sort)}`);
+						}
+
+						if (params.length) {
+							url += (url.includes('?') ? '&' : '?') + params.join('&');
+						}
 					}
 
 					options = {
@@ -558,10 +573,33 @@ export class GlpiV2 implements INodeType {
 						// If the API returned an array, push each element as a separate output row
 						if (Array.isArray(response)) {
 							let outputArray = response;
+
+							// apply sort locally if requested
+							const sort = this.getNodeParameter('sort', itemIndex, '') as string;
+							if (sort) {
+								try {
+									outputArray = [...outputArray].sort((a: any, b: any) => {
+										const va = a ? a[sort] : undefined;
+										const vb = b ? b[sort] : undefined;
+										if (va == null && vb == null) return 0;
+										if (va == null) return 1;
+										if (vb == null) return -1;
+										if (typeof va === 'number' && typeof vb === 'number') return va - vb;
+										return String(va).localeCompare(String(vb));
+									});
+								} catch (e) {
+									// fall back to original order on error
+									outputArray = response;
+								}
+							}
+
 							if (returnAll === false) {
 								const limit = this.getNodeParameter('limit', itemIndex, 50) as number;
-								outputArray = response.slice(0, limit);
+								const start = this.getNodeParameter('start', itemIndex, 0) as number;
+								const s = start && start > 0 ? start : 0;
+								outputArray = outputArray.slice(s, s + limit);
 							}
+
 							for (const resItem of outputArray) {
 								returnData.push({
 									json: resItem,
