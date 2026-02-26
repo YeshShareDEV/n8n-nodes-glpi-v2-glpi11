@@ -159,7 +159,7 @@ export class GlpiV2 implements INodeType {
 				const operation = this.getNodeParameter('operation', itemIndex) as string;
 
 				// Determina o itemtype baseado no resource e operation
-				const itemtype: string = (this.getNodeParameter('itemtype', itemIndex) as string) || '';
+				let itemtype: string = (this.getNodeParameter('itemtype', itemIndex) as string) || '';
 
 				// Normalize itemtype by prefixing with a resource-specific segment when needed.
 				// Example: 'Assistance Management' -> 'Assistance/Ticket'
