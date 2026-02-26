@@ -240,6 +240,9 @@ export class GlpiV2 implements INodeType {
 					normalizedOperation = 'update';
 				}
 
+				// Read pagination parameters when available in the node UI
+				const returnAll = this.getNodeParameter('returnAll', itemIndex, true) as boolean;
+
 				let token = '';
 				try {
 					token = await getOAuthToken.call(
@@ -268,9 +271,17 @@ export class GlpiV2 implements INodeType {
 
 				if (normalizedOperation === 'get') {
 					const id = this.getNodeParameter('itemid', itemIndex, '') as string;
+
+					// Build URL and apply limit query param when an ID is not requested
+					let url = `${baseUrl}/${itemtype}${id ? '/' + id : ''}`;
+					if (!id && returnAll === false) {
+						const limit = this.getNodeParameter('limit', itemIndex, 50) as number;
+						url += (url.includes('?') ? '&' : '?') + `limit=${limit}`;
+					}
+
 					options = {
 						method: 'GET' as IHttpRequestMethods,
-						url: `${baseUrl}/${itemtype}${id ? '/' + id : ''}`,
+						url,
 						headers,
 						json: true,
 					};
@@ -546,7 +557,12 @@ export class GlpiV2 implements INodeType {
 						const response = await this.helpers.httpRequest(options as any);
 						// If the API returned an array, push each element as a separate output row
 						if (Array.isArray(response)) {
-							for (const resItem of response) {
+							let outputArray = response;
+							if (returnAll === false) {
+								const limit = this.getNodeParameter('limit', itemIndex, 50) as number;
+								outputArray = response.slice(0, limit);
+							}
+							for (const resItem of outputArray) {
 								returnData.push({
 									json: resItem,
 									pairedItem: { item: itemIndex },
