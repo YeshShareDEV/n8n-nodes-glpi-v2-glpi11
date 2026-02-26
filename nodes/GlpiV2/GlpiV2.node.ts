@@ -543,11 +543,21 @@ export class GlpiV2 implements INodeType {
 					});
 				} else {
 					// Execute the prepared request and return the response
-					const response = await this.helpers.httpRequest(options as any);
-					returnData.push({
-						json: response,
-						pairedItem: { item: itemIndex },
-					});
+						const response = await this.helpers.httpRequest(options as any);
+						// If the API returned an array, push each element as a separate output row
+						if (Array.isArray(response)) {
+							for (const resItem of response) {
+								returnData.push({
+									json: resItem,
+									pairedItem: { item: itemIndex },
+								});
+							}
+						} else {
+							returnData.push({
+								json: response,
+								pairedItem: { item: itemIndex },
+							});
+						}
 				}
 			} catch (error) {
 				if (this.continueOnFail()) {
