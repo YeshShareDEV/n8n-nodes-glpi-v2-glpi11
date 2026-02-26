@@ -267,7 +267,7 @@ export class GlpiV2 implements INodeType {
 				};
 
 				if (normalizedOperation === 'get') {
-					const id = this.getNodeParameter('itemId', itemIndex, '') as string;
+					const id = this.getNodeParameter('itemid', itemIndex, '') as string;
 					options = {
 						method: 'GET' as IHttpRequestMethods,
 						url: `${baseUrl}/${itemtype}${id ? '/' + id : ''}`,
@@ -340,7 +340,7 @@ export class GlpiV2 implements INodeType {
 						json: true,
 					};
 				} else if (normalizedOperation === 'update') {
-					const id = this.getNodeParameter('itemId', itemIndex);
+					const id = this.getNodeParameter('itemid', itemIndex);
 					const input: IDataObject = {};
 
 					if (resource === 'Assistance') {
@@ -434,7 +434,7 @@ export class GlpiV2 implements INodeType {
 						headers,
 						body: {
 							input: {
-								items_id: this.getNodeParameter('itemId', itemIndex),
+								items_id: this.getNodeParameter('itemid', itemIndex),
 								itemtype,
 								content: this.getNodeParameter('comment', itemIndex),
 								is_private: this.getNodeParameter('isPrivate', itemIndex) ? 1 : 0,
@@ -443,7 +443,7 @@ export class GlpiV2 implements INodeType {
 						json: true,
 					};
 				} else if (operation === 'delete') {
-					const id = this.getNodeParameter('itemId', itemIndex);
+					const id = this.getNodeParameter('itemid', itemIndex);
 					options = {
 						method: 'DELETE' as IHttpRequestMethods,
 						url: `${baseUrl}/${itemtype}/${id}`,
@@ -455,7 +455,7 @@ export class GlpiV2 implements INodeType {
 					operation === 'deleteProfile' ||
 					operation === 'deleteUser'
 				) {
-					const id = this.getNodeParameter('itemId', itemIndex);
+					const id = this.getNodeParameter('itemid', itemIndex);
 					options = {
 						method: 'DELETE' as IHttpRequestMethods,
 						url: `${baseUrl}/${itemtype}/${id}`,
@@ -469,7 +469,7 @@ export class GlpiV2 implements INodeType {
 						headers,
 						body: {
 							input: {
-								items_id: this.getNodeParameter('itemId', itemIndex),
+								items_id: this.getNodeParameter('itemid', itemIndex),
 								itemtype,
 								content: this.getNodeParameter('content', itemIndex),
 								users_id: this.getNodeParameter('users_id', itemIndex),
@@ -561,7 +561,7 @@ export class GlpiV2 implements INodeType {
 			}
 		}
 
-		return [returnData];
+		return returnData.map(item => [item]);
 	}
 }
 

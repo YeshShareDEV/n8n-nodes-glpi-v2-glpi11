@@ -1,6 +1,6 @@
 {
 	"name": "n8n-nodes-glpi-v2-fork",
-	"version": "2.1.1-rc.0",
+	"version": "2.1.2-rc.0",
 	"description": "GLPI Rest API Node compatible with GLPI API V2.",
 	"license": "MIT",
 	"homepage": "https://github.com/YeshShareDEV/n8n-nodes-glpi-v2-glpi11",
@@ -20,7 +20,7 @@
 		"url": "https://github.com/YeshShareDEV/n8n-nodes-glpi-v2-glpi11.git"
 	},
 	"scripts": {
-		"build": "n8n-node build",
+		"build": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true});\" && n8n-node build",
 		"build:watch": "tsc --watch",
 		"dev": "n8n-node dev",
 		"lint": "n8n-node lint",
