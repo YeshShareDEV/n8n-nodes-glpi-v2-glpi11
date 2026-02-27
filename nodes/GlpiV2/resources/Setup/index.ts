@@ -124,24 +124,7 @@ export const setupDescription: INodeProperties[] = [
   },
 
   // Config list filters
-  {
-    displayName: 'Search',
-    name: 'search',
-    type: 'string',
-    default: '',
-    placeholder: 'Free-text filter for config entries',
-    displayOptions: { show: { subResource: ['Config'], operation: ['list'], resource: ['Setup'] } },
-  },
-
-  // LDAP Directory form for create/update
-  {
-    displayName: 'LDAP Settings',
-    name: 'ldapSettings',
-    type: 'collection',
-    placeholder: 'LDAP directory settings',
-    default: {},
-    displayOptions: { show: { subResource: ['LDAPDirectory'], operation: ['create', 'update'], resource: ['Setup'] } },
-    options: [
+    
       { displayName: 'Name', name: 'name', type: 'string', default: '' },
       { displayName: 'Host', name: 'host', type: 'string', default: '' },
       { displayName: 'Port', name: 'port', type: 'number', default: 389 },

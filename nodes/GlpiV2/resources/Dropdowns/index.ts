@@ -4,7 +4,7 @@ import { dropdownsCreateDescription } from './create';
 import { dropdownsUpdateDescription } from './update';
 import { dropdownsDeleteDescription } from './delete';
 import { dropdownsOptionsDescription } from './options';
-
+    
 const showOnlyForDropdowns = { resource: ['Dropdowns'] };
 
 export const dropdownsDescription: INodeProperties[] = [
@@ -14,36 +14,7 @@ export const dropdownsDescription: INodeProperties[] = [
 		type: 'options',
 		noDataExpression: true,
 		displayOptions: { show: showOnlyForDropdowns },
-		options: [
-			{ name: 'List', value: 'list', action: 'List entries' },
-			{ name: 'Get', value: 'get', action: 'Get an entry' },
-			{ name: 'Create', value: 'create', action: 'Create an entry' },
-			{ name: 'Update', value: 'update', action: 'Update an entry' },
-			{ name: 'Delete', value: 'delete', action: 'Delete an entry' },
-		],
-		default: 'list',
-	},
-	{
-		displayName: 'Dropdown Type',
-		name: 'dropdownType',
-		type: 'options',
-		displayOptions: { show: showOnlyForDropdowns },
-		options: [
-			{ name: 'Calendar', value: 'Calendar' },
-			{ name: 'Location', value: 'Location' },
-			{ name: 'Manufacturer', value: 'Manufacturer' },
-			{ name: 'State', value: 'State' },
-		],
-		default: 'State',
-		required: true,
-	},
-	{
-		displayName: 'Entry ID',
-		name: 'entryId',
-		type: 'number',
-		typeOptions: { minValue: 1 },
-		displayOptions: { show: { operation: ['get', 'update', 'delete'], resource: ['Dropdowns'] } },
-		description: 'ID of the dropdown entry',
+    
 		default: 0,
 	},
 	{

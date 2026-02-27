@@ -11,36 +11,7 @@ export const defaultDescription: INodeProperties[] = [
 		type: 'options',
 		noDataExpression: true,
 		displayOptions: { show: showOnlyForDefault },
-		options: [
-			{ name: 'Homepage', value: 'homepage', action: 'GET /' },
-			{ name: 'Dynamic Request', value: 'dynamic', action: 'Arbitrary request' },
-			{ name: 'Get Doc', value: 'doc', action: 'GET /doc' },
-			{ name: 'Get Doc JSON', value: 'docJson', action: 'GET /doc.json' },
-			{ name: 'Getting Started', value: 'gettingStarted', action: 'GET /getting-started' },
-			{ name: 'Transfer', value: 'transfer', action: 'POST /Transfer' },
-		],
-		default: 'homepage',
-	},
-	// Dynamic Request fields
-	{
-		displayName: 'Method',
-		name: 'method',
-		type: 'options',
-		options: [
-			{ name: 'OPTIONS', value: 'OPTIONS' },
-			{ name: 'GET', value: 'GET' },
-			{ name: 'POST', value: 'POST' },
-			{ name: 'PUT', value: 'PUT' },
-			{ name: 'PATCH', value: 'PATCH' },
-			{ name: 'DELETE', value: 'DELETE' },
-		],
-		default: 'GET',
-		displayOptions: { show: { operation: ['dynamic'], resource: ['Default'] } },
-	},
-	{
-		displayName: 'Path',
-		name: 'path',
-		type: 'string',
+    
 		placeholder: 'e.g. Transfer or Setup/Options',
 		default: '',
 		displayOptions: { show: { operation: ['dynamic'], resource: ['Default'] } },

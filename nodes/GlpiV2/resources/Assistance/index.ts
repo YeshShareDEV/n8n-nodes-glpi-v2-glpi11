@@ -16,36 +16,7 @@ export const assistanceDescription: INodeProperties[] = [
 		type: 'options',
 		noDataExpression: true,
 		displayOptions: { show: showOnlyForAssistance },
-		options: [
-			{ name: 'Get', value: 'get', action: 'Get an item' },
-			{ name: 'Create', value: 'create', action: 'Create an item' },
-			{ name: 'Update', value: 'update', action: 'Update an item' },
-			{ name: 'Delete', value: 'delete', action: 'Delete an item' },
-		],
-		default: 'get',
-	},
-	{
-		displayName: 'Item Type',
-		name: 'itemtype',
-		type: 'options',
-		displayOptions: { show: showOnlyForAssistance },
-		options: [
-			{ name: 'Change', value: 'Change' },
-			{ name: 'Ticket', value: 'Ticket' },
-			{ name: 'Problem', value: 'Problem' },
-			{ name: 'Recurring Change', value: 'RecurringChange' },
-			{ name: 'Recurring Ticket', value: 'RecurringTicket' },
-		],
-		default: 'Ticket',
-		required: true,
-		description: 'Sub-resource of Assistance',
-	},
-	{
-		displayName: 'Item ID',
-		name: 'itemid',
-		type: 'number',
-		placeholder: 'Deixe vazio para listar todos',
-		typeOptions: { minValue: 1 },
+    
 		displayOptions: {
 			show: { operation: ['get', 'update', 'delete'], resource: ['Assistance'] },
 		},

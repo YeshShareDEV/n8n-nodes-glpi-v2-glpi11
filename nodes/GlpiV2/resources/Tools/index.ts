@@ -36,24 +36,7 @@ export const toolsDescription: INodeProperties[] = [
   },
 
   // Item ID (when applicable)
-  {
-    displayName: 'Item ID',
-    name: 'itemId',
-    type: 'string',
-    default: '',
-    description: 'ID of the tool instance (required for update/delete/get by id)',
-    displayOptions: { show: { resource: ['Tools'], operation: ['get', 'update', 'delete'] } },
-  },
-
-  // GET list controls
-  {
-    displayName: 'Return All',
-    name: 'returnAll',
-    type: 'boolean',
-    default: true,
-    displayOptions: { show: { resource: ['Tools'], operation: ['get'] } },
-  },
-  {
+    
     displayName: 'Limit',
     name: 'limit',
     type: 'number',

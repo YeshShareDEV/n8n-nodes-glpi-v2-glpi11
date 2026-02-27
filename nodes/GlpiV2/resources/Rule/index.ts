@@ -30,24 +30,7 @@ export const ruleDescription: INodeProperties[] = [
     description: 'Collection of rules (e.g., "global", "user", or specific scope)',
     displayOptions: { show: showOnlyForRule },
   },
-  {
-    displayName: 'Item ID',
-    name: 'itemId',
-    type: 'string',
-    default: '',
-    description: 'Rule ID (required for get by id, update and delete)',
-    displayOptions: { show: { resource: ['Rule'], operation: ['get', 'update', 'delete'] } },
-  },
-  // GET specifics
-  {
-    displayName: 'Return All',
-    name: 'returnAll',
-    type: 'boolean',
-    default: true,
-    displayOptions: { show: { resource: ['Rule'], operation: ['get'] } },
-  },
-  {
-    displayName: 'Limit',
+    
     name: 'limit',
     type: 'number',
     default: 50,

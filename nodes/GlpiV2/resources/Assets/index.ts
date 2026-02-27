@@ -118,36 +118,7 @@ export const AssetsDescription: INodeProperties[] = [
 		},
 		description: 'Limite de itens retornados quando Return All for false',
 	},
-	{
-		displayName: 'Start',
-		name: 'start',
-		type: 'number',
-		default: 0,
-		typeOptions: { minValue: 0 },
-		displayOptions: {
-			show: {
-				operation: ['get'],
-				returnAll: [false],
-				resource: ['Assets'],
-			},
-		},
-		description: 'Offset inicial (start) para paginação',
-	},
-	{
-		displayName: 'Sort',
-		name: 'sort',
-		type: 'string',
-		default: '',
-		placeholder: 'e.g. id or name',
-		displayOptions: {
-			show: {
-				operation: ['get'],
-				returnAll: [false],
-				resource: ['Assets'],
-			},
-		},
-		description: 'Campo para ordenar os resultados (ex: id, name)',
-	},
+    
 	...AssetGetDescription,
 	...AssetCreateDescription,
 	...AssetUpdateDescription,
