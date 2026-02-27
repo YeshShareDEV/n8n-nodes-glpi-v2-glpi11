@@ -282,7 +282,7 @@ export class GlpiV2 implements INodeType {
 				if (normalizedOperation === 'get') {
 					const id = this.getNodeParameter('itemid', itemIndex, '') as string;
 
-					// Build URL and apply pagination/filter query params when an ID is not requested
+					// Build URL and apply pagination query params when an ID is not requested
 					let url = `${baseUrl}/${itemtype}${id ? '/' + id : ''}`;
 					if (!id && returnAll === false) {
 						const params: string[] = [];
@@ -577,28 +577,11 @@ export class GlpiV2 implements INodeType {
 						if (Array.isArray(response)) {
 							let outputArray = response;
 
-							// apply sort locally if requested
-							const sort = this.getNodeParameter('sort', itemIndex, '') as string;
-							if (sort) {
-								try {
-									outputArray = [...outputArray].sort((a: any, b: any) => {
-										const va = a ? a[sort] : undefined;
-										const vb = b ? b[sort] : undefined;
-										if (va == null && vb == null) return 0;
-										if (va == null) return 1;
-										if (vb == null) return -1;
-										if (typeof va === 'number' && typeof vb === 'number') return va - vb;
-										return String(va).localeCompare(String(vb));
-									});
-								} catch (e) {
-									// fall back to original order on error
-									outputArray = response;
-								}
-							}
+							// No local sort applied (sorting removed)
 
 							if (returnAll === false) {
 								const limit = this.getNodeParameter('limit', itemIndex, 10) as number;
-								// start is intentionally not used when server-side filtering/pagination is applied
+								// start is intentionally not used when server-side pagination is applied
 								outputArray = outputArray.slice(0, limit);
 							}
 

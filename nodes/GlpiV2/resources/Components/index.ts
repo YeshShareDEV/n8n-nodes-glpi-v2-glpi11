@@ -68,7 +68,7 @@ export const componentsDescription: INodeProperties[] = [
 		displayOptions: { show: { operation: ['get'], returnAll: [false], resource: ['Components'] } },
 		description: 'Limite de itens retornados quando Return All for false',
 	},
-	// Start/Sort removed per UI requirements
+	// Start removed per UI requirements
 	...componentsGetDescription,
 	...componentsCreateDescription,
 	...componentsUpdateDescription,

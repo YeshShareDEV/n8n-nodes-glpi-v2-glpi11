@@ -61,7 +61,7 @@ export const defaultDescription: INodeProperties[] = [
 		typeOptions: { minValue: 1 },
 		displayOptions: { show: { operation: ['dynamic'], returnAll: [false], resource: ['Default'] } },
 	},
-	// Start/Sort removed per UI requirements
+	// Start removed per UI requirements
 	// Transfer action convenience
 	{
 		displayName: 'Transfer Payload',
