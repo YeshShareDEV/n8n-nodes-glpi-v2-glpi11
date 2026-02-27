@@ -21,6 +21,7 @@ export const managementDescription: INodeProperties[] = [
 			{ name: 'Delete', value: 'delete', action: 'Delete an item' },
 		],
 		default: 'get',
+	},
 	{
 		displayName: 'Item ID',
 		name: 'itemid',
