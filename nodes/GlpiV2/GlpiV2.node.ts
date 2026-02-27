@@ -169,15 +169,7 @@ export class GlpiV2 implements INodeType {
 				description: 'If enabled, the node will output the configured credentials and skip any API requests.',
 			},
 
-			{
-				displayName: 'Limit',
-				name: 'limit',
-				type: 'number',
-				default: 10,
-				typeOptions: { minValue: 1 },
-				description: 'Maximum results when Return All is false.',
-				displayOptions: { show: { operation: ['get'] } },
-			},
+			// 'Limit' field removed from main node properties.
 			...administrationDescription,
 			...AssetsDescription,
 			...assistanceDescription,
