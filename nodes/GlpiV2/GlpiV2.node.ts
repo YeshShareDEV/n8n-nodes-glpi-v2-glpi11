@@ -168,14 +168,7 @@ export class GlpiV2 implements INodeType {
 				default: false,
 				description: 'If enabled, the node will output the configured credentials and skip any API requests.',
 			},
-			{
-				displayName: 'RSQL Filter',
-				name: 'filter',
-				type: 'string',
-				default: '',
-				description: 'RSQL filter string (without "?filter="). Example: name==*john*;status==2. Do not include start or sort.',
-				displayOptions: { show: { operation: ['get'] } },
-			},
+
 			{
 				displayName: 'Limit',
 				name: 'limit',
@@ -294,12 +287,6 @@ export class GlpiV2 implements INodeType {
 					if (!id && returnAll === false) {
 						const params: string[] = [];
 
-						// If an RSQL filter is provided in the node UI, append it (encoded).
-						const rawFilter = this.getNodeParameter('filter', itemIndex, '') as string;
-						const filterValue = (rawFilter || '').replace(/^\?filter=/i, '').trim();
-						if (filterValue) {
-							params.push(`filter=${encodeURIComponent(filterValue)}`);
-						}
 
 						// Only include limit (start/sort intentionally omitted)
 						const limit = this.getNodeParameter('limit', itemIndex, 10) as number;

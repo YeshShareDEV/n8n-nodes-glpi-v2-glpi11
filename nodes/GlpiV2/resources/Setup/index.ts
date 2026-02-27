@@ -110,8 +110,7 @@ export const setupDescription: INodeProperties[] = [
     ],
   },
 
-  // Config list filters removed to avoid invalid UI entries
-
+ 
   // Delete confirmation for dangerous actions
   {
     displayName: 'Require Confirmation',
