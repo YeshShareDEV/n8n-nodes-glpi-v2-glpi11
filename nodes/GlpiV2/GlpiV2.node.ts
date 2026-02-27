@@ -168,6 +168,23 @@ export class GlpiV2 implements INodeType {
 				default: false,
 				description: 'If enabled, the node will output the configured credentials and skip any API requests.',
 			},
+			{
+				displayName: 'RSQL Filter',
+				name: 'filter',
+				type: 'string',
+				default: '',
+				description: 'RSQL filter string (without "?filter="). Example: name==*john*;status==2. Do not include start or sort.',
+				displayOptions: { show: { operation: ['get'] } },
+			},
+			{
+				displayName: 'Limit',
+				name: 'limit',
+				type: 'number',
+				default: 10,
+				typeOptions: { minValue: 1 },
+				description: 'Maximum results when Return All is false.',
+				displayOptions: { show: { operation: ['get'] } },
+			},
 			...administrationDescription,
 			...AssetsDescription,
 			...assistanceDescription,
@@ -272,22 +289,21 @@ export class GlpiV2 implements INodeType {
 				if (normalizedOperation === 'get') {
 					const id = this.getNodeParameter('itemid', itemIndex, '') as string;
 
-					// Build URL and apply pagination/sort query params when an ID is not requested
+					// Build URL and apply pagination/filter query params when an ID is not requested
 					let url = `${baseUrl}/${itemtype}${id ? '/' + id : ''}`;
 					if (!id && returnAll === false) {
 						const params: string[] = [];
-						const limit = this.getNodeParameter('limit', itemIndex, 50) as number;
+
+						// If an RSQL filter is provided in the node UI, append it (encoded).
+						const rawFilter = this.getNodeParameter('filter', itemIndex, '') as string;
+						const filterValue = (rawFilter || '').replace(/^\?filter=/i, '').trim();
+						if (filterValue) {
+							params.push(`filter=${encodeURIComponent(filterValue)}`);
+						}
+
+						// Only include limit (start/sort intentionally omitted)
+						const limit = this.getNodeParameter('limit', itemIndex, 10) as number;
 						params.push(`limit=${limit}`);
-
-						const start = this.getNodeParameter('start', itemIndex, undefined) as number | undefined;
-						if (start !== undefined && start !== null) {
-							params.push(`start=${start}`);
-						}
-
-						const sort = this.getNodeParameter('sort', itemIndex, '') as string;
-						if (sort) {
-							params.push(`sort=${encodeURIComponent(sort)}`);
-						}
 
 						if (params.length) {
 							url += (url.includes('?') ? '&' : '?') + params.join('&');
@@ -594,10 +610,9 @@ export class GlpiV2 implements INodeType {
 							}
 
 							if (returnAll === false) {
-								const limit = this.getNodeParameter('limit', itemIndex, 50) as number;
-								const start = this.getNodeParameter('start', itemIndex, 0) as number;
-								const s = start && start > 0 ? start : 0;
-								outputArray = outputArray.slice(s, s + limit);
+								const limit = this.getNodeParameter('limit', itemIndex, 10) as number;
+								// start is intentionally not used when server-side filtering/pagination is applied
+								outputArray = outputArray.slice(0, limit);
 							}
 
 							for (const resItem of outputArray) {

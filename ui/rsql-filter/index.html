@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Construtor RSQL - GLPI</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="container">
+      <h1>Construtor de Filtros RSQL (GLPI)</h1>
+
+      <section class="controls">
+        <div class="row">
+          <label>Campo</label>
+          <input id="fieldInput" type="text" placeholder="Ex: name" />
+        </div>
+
+        <div class="row">
+          <label>Operador</label>
+          <select id="operatorSelect"></select>
+        </div>
+
+        <div class="row" id="valueRow">
+          <label>Valor</label>
+          <input id="valueInput" type="text" placeholder="Valor" />
+        </div>
+
+        <div class="row actions-row">
+          <button id="addFilterBtn">Adicionar Filtro</button>
+          <button id="clearAllBtn" class="danger">Limpar Tudo</button>
+        </div>
+      </section>
+
+      <section class="list">
+        <h2>Filtros</h2>
+        <ul id="filtersList"></ul>
+      </section>
+
+      <section class="limit">
+        <label>Limit</label>
+        <input id="limitInput" type="number" min="1" value="10" />
+      </section>
+
+      <section class="output">
+        <h2>Resultado</h2>
+        <div id="result">?filter=&limit=10</div>
+        <div class="actions">
+          <button id="copyBtn">Copiar</button>
+        </div>
+      </section>
+    </main>
+
+    <script src="rsql-filter.js"></script>
+  </body>
+</html>
