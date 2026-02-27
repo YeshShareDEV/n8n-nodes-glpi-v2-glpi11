@@ -11,10 +11,12 @@ export const defaultDescription: INodeProperties[] = [
 		type: 'options',
 		noDataExpression: true,
 		displayOptions: { show: showOnlyForDefault },
-    
+		options: [
+			{ name: 'Dynamic', value: 'dynamic', action: 'Perform a dynamic API request' },
+			{ name: 'Transfer', value: 'transfer', action: 'Transfer payload' },
+		],
 		placeholder: 'e.g. Transfer or Setup/Options',
-		default: '',
-		displayOptions: { show: { operation: ['dynamic'], resource: ['Default'] } },
+		default: 'dynamic',
 		description: 'Path to append to /api.php (validate/sanitize before use)',
 	},
 	{
@@ -60,23 +62,7 @@ export const defaultDescription: INodeProperties[] = [
 		displayOptions: { show: { operation: ['dynamic'], returnAll: [false], resource: ['Default'] } },
 	},
 	{
-		displayName: 'Start',
-		name: 'start',
-		type: 'number',
-		default: 0,
-		typeOptions: { minValue: 0 },
-		displayOptions: { show: { operation: ['dynamic'], returnAll: [false], resource: ['Default'] } },
-		description: 'Offset inicial (start) para paginação',
-	},
-	{
-		displayName: 'Sort',
-		name: 'sort',
-		type: 'string',
-		default: '',
-		placeholder: 'e.g. id or name',
-		displayOptions: { show: { operation: ['dynamic'], returnAll: [false], resource: ['Default'] } },
-		description: 'Campo para ordenar os resultados (ex: id, name)',
-	},
+	// Start/Sort removed per UI requirements
 	// Transfer action convenience
 	{
 		displayName: 'Transfer Payload',

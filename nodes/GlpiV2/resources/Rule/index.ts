@@ -30,32 +30,21 @@ export const ruleDescription: INodeProperties[] = [
     description: 'Collection of rules (e.g., "global", "user", or specific scope)',
     displayOptions: { show: showOnlyForRule },
   },
-    
+  {
+    displayName: 'Return All',
+    name: 'returnAll',
+    type: 'boolean',
+    displayOptions: { show: { operation: ['get'], resource: ['Rule'] } },
+    default: false,
+  },
+  {
+    displayName: 'Limit',
     name: 'limit',
     type: 'number',
     default: 50,
     typeOptions: { minValue: 1 },
     displayOptions: { show: { resource: ['Rule'], operation: ['get'], returnAll: [false] } },
-  },
-
-  {
-    displayName: 'Start',
-    name: 'start',
-    type: 'number',
-    default: 0,
-    typeOptions: { minValue: 0 },
-    displayOptions: { show: { resource: ['Rule'], operation: ['get'], returnAll: [false] } },
-    description: 'Offset inicial (start) para paginação',
-  },
-
-  {
-    displayName: 'Sort',
-    name: 'sort',
-    type: 'string',
-    default: '',
-    placeholder: 'e.g. id or name',
-    displayOptions: { show: { resource: ['Rule'], operation: ['get'], returnAll: [false] } },
-    description: 'Campo para ordenar os resultados (ex: id, name)',
+    description: 'Limite de itens retornados quando Return All for false',
   },
   // CREATE/UPDATE: criteria and actions
   {

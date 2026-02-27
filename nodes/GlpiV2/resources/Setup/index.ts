@@ -81,25 +81,12 @@ export const setupDescription: INodeProperties[] = [
     typeOptions: { minValue: 1 },
     displayOptions: { show: { operation: ['list'], returnAll: [false], resource: ['Setup'] } },
   },
-
   {
-    displayName: 'Start',
-    name: 'start',
-    type: 'number',
-    default: 0,
-    typeOptions: { minValue: 0 },
-    displayOptions: { show: { operation: ['list'], returnAll: [false], resource: ['Setup'] } },
-    description: 'Offset inicial (start) para paginação',
-  },
-
-  {
-    displayName: 'Sort',
-    name: 'sort',
-    type: 'string',
-    default: '',
-    placeholder: 'e.g. id or name',
-    displayOptions: { show: { operation: ['list'], returnAll: [false], resource: ['Setup'] } },
-    description: 'Campo para ordenar os resultados (ex: id, name)',
+    displayName: 'Return All',
+    name: 'returnAll',
+    type: 'boolean',
+    default: false,
+    displayOptions: { show: { operation: ['list'], resource: ['Setup'] } },
   },
 
   // Config create/update: key/value editor
@@ -123,18 +110,7 @@ export const setupDescription: INodeProperties[] = [
     ],
   },
 
-  // Config list filters
-    
-      { displayName: 'Name', name: 'name', type: 'string', default: '' },
-      { displayName: 'Host', name: 'host', type: 'string', default: '' },
-      { displayName: 'Port', name: 'port', type: 'number', default: 389 },
-      { displayName: 'Use SSL', name: 'useSsl', type: 'boolean', default: false },
-      { displayName: 'Bind DN', name: 'bindDn', type: 'string', default: '' },
-      { displayName: 'Bind Password', name: 'bindPassword', type: 'string', typeOptions: { password: true }, default: '' },
-      { displayName: 'Base DN', name: 'baseDn', type: 'string', default: '' },
-      { displayName: 'Account Filter', name: 'accountFilter', type: 'string', default: '' },
-    ],
-  },
+  // Config list filters removed to avoid invalid UI entries
 
   // Delete confirmation for dangerous actions
   {

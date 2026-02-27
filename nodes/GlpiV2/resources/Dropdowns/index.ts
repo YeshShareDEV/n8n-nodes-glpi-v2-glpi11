@@ -14,8 +14,13 @@ export const dropdownsDescription: INodeProperties[] = [
 		type: 'options',
 		noDataExpression: true,
 		displayOptions: { show: showOnlyForDropdowns },
-    
-		default: 0,
+		options: [
+			{ name: 'Get', value: 'get', action: 'Get a dropdown' },
+			{ name: 'Create', value: 'create', action: 'Create a dropdown' },
+			{ name: 'Update', value: 'update', action: 'Update a dropdown' },
+			{ name: 'Delete', value: 'delete', action: 'Delete a dropdown' },
+		],
+		default: 'get',
 	},
 	{
 		displayName: 'Return All',
@@ -33,22 +38,11 @@ export const dropdownsDescription: INodeProperties[] = [
 		displayOptions: { show: { operation: ['list'], returnAll: [false], resource: ['Dropdowns'] } },
 	},
 	{
-		displayName: 'Start',
-		name: 'start',
-		type: 'number',
-		default: 0,
-		typeOptions: { minValue: 0 },
-		displayOptions: { show: { operation: ['list'], returnAll: [false], resource: ['Dropdowns'] } },
-		description: 'Offset inicial (start) para paginação',
-	},
-	{
-		displayName: 'Sort',
-		name: 'sort',
-		type: 'string',
-		default: '',
-		placeholder: 'e.g. id or name',
-		displayOptions: { show: { operation: ['list'], returnAll: [false], resource: ['Dropdowns'] } },
-		description: 'Campo para ordenar os resultados (ex: id, name)',
+		displayName: 'Return All',
+		name: 'returnAll',
+		type: 'boolean',
+		displayOptions: { show: { operation: ['list'], resource: ['Dropdowns'] } },
+		default: false,
 	},
 	{
 		displayName: 'Data Form',
