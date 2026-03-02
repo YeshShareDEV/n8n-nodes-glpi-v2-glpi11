@@ -236,8 +236,54 @@ export class GlpiV2 implements INodeType {
 						json: true,
 					};
 				} else if (normalizedOperation === 'create') {
-					if (itemtype && !itemtype.includes('/')) itemtype = `Assets/${itemtype}`;
-					const input = this.getNodeParameter('input', itemIndex, {}) as IDataObject;
+					const input: IDataObject = {};
+
+					if (resource === 'Administration') {
+						if (itemtype.endsWith('/User')) {
+							input.name = this.getNodeParameter('name', itemIndex) as string;
+
+							const firstname = this.getNodeParameter('firstname', itemIndex, '') as string;
+							if (firstname) input.firstname = firstname;
+
+							input.is_active = this.getNodeParameter('is_active', itemIndex, true) ? 1 : 0;
+							input.entities_id = this.getNodeParameter('entities_id', itemIndex, 0) as number;
+
+							const emailPassword = this.getNodeParameter('email_password', itemIndex, true) as boolean;
+							if (!emailPassword) {
+								const password = this.getNodeParameter('password', itemIndex, '') as string;
+								if (password) input.password = password;
+							}
+
+							const email = this.getNodeParameter('email', itemIndex, '') as string;
+							if (email) input._useremails = [email];
+
+							const optionsParam = this.getNodeParameter('options', itemIndex, {}) as IDataObject;
+							if (optionsParam.is_recursive !== undefined) input.is_recursive = optionsParam.is_recursive ? 1 : 0;
+							if (optionsParam.profiles_id) input.profiles_id = optionsParam.profiles_id;
+							if (optionsParam.phone) input.phone = optionsParam.phone;
+							if (optionsParam.mobile) input.mobile = optionsParam.mobile;
+							if (optionsParam.realname) input.realname = optionsParam.realname;
+						} else if (itemtype.endsWith('/Group')) {
+							input.name = this.getNodeParameter('name', itemIndex) as string;
+							input.is_requester = this.getNodeParameter('is_requester', itemIndex, true) ? 1 : 0;
+							input.is_watcher = this.getNodeParameter('is_watcher', itemIndex, true) ? 1 : 0;
+							input.is_notify = this.getNodeParameter('is_notify', itemIndex, true) ? 1 : 0;
+							input.is_usergroup = this.getNodeParameter('is_usergroup', itemIndex, true) ? 1 : 0;
+
+							const optionsParam = this.getNodeParameter('options', itemIndex, {}) as IDataObject;
+							if (optionsParam.code) input.code = optionsParam.code;
+							if (optionsParam.recursive_membership !== undefined) input.recursive_membership = optionsParam.recursive_membership ? 1 : 0;
+							if (optionsParam.groups_id) input.groups_id = optionsParam.groups_id;
+							if (optionsParam.comment) input.comment = optionsParam.comment;
+							if (optionsParam.is_manager !== undefined) input.is_manager = optionsParam.is_manager ? 1 : 0;
+							if (optionsParam.is_assign !== undefined) input.is_assign = optionsParam.is_assign ? 1 : 0;
+							if (optionsParam.is_task !== undefined) input.is_task = optionsParam.is_task ? 1 : 0;
+						} else {
+							Object.assign(input, this.getNodeParameter('input', itemIndex, {}) as IDataObject);
+						}
+					} else {
+						Object.assign(input, this.getNodeParameter('input', itemIndex, {}) as IDataObject);
+					}
 
 					options = {
 						method: 'POST' as IHttpRequestMethods,
@@ -248,8 +294,67 @@ export class GlpiV2 implements INodeType {
 					};
 				} else if (normalizedOperation === 'update') {
 					const id = this.getNodeParameter('itemid', itemIndex);
-					if (itemtype && !itemtype.includes('/')) itemtype = `Assets/${itemtype}`;
-					const input = this.getNodeParameter('input', itemIndex, {}) as IDataObject;
+					const input: IDataObject = {};
+
+					if (resource === 'Administration') {
+						if (itemtype.endsWith('/User')) {
+							const name = this.getNodeParameter('name', itemIndex, '') as string;
+							if (name) input.name = name;
+
+							const firstname = this.getNodeParameter('firstname', itemIndex, '') as string;
+							if (firstname) input.firstname = firstname;
+
+							const email = this.getNodeParameter('email', itemIndex, '') as string;
+							if (email) input._useremails = [email];
+
+							const isActive = this.getNodeParameter('is_active', itemIndex, undefined) as boolean | undefined;
+							if (isActive !== undefined) input.is_active = isActive ? 1 : 0;
+
+							const entitiesId = this.getNodeParameter('entities_id', itemIndex, 0) as number;
+							if (entitiesId) input.entities_id = entitiesId;
+
+							const emailPassword = this.getNodeParameter('email_password', itemIndex, true) as boolean;
+							if (!emailPassword) {
+								const password = this.getNodeParameter('password', itemIndex, '') as string;
+								if (password) input.password = password;
+							}
+
+							const optionsParam = this.getNodeParameter('options', itemIndex, {}) as IDataObject;
+							if (optionsParam.is_recursive !== undefined) input.is_recursive = optionsParam.is_recursive ? 1 : 0;
+							if (optionsParam.profiles_id) input.profiles_id = optionsParam.profiles_id;
+							if (optionsParam.phone) input.phone = optionsParam.phone;
+							if (optionsParam.mobile) input.mobile = optionsParam.mobile;
+							if (optionsParam.realname) input.realname = optionsParam.realname;
+						} else if (itemtype.endsWith('/Group')) {
+							const name = this.getNodeParameter('name', itemIndex, '') as string;
+							if (name) input.name = name;
+
+							const isRequester = this.getNodeParameter('is_requester', itemIndex, undefined) as boolean | undefined;
+							if (isRequester !== undefined) input.is_requester = isRequester ? 1 : 0;
+
+							const isWatcher = this.getNodeParameter('is_watcher', itemIndex, undefined) as boolean | undefined;
+							if (isWatcher !== undefined) input.is_watcher = isWatcher ? 1 : 0;
+
+							const isNotify = this.getNodeParameter('is_notify', itemIndex, undefined) as boolean | undefined;
+							if (isNotify !== undefined) input.is_notify = isNotify ? 1 : 0;
+
+							const isUsergroup = this.getNodeParameter('is_usergroup', itemIndex, undefined) as boolean | undefined;
+							if (isUsergroup !== undefined) input.is_usergroup = isUsergroup ? 1 : 0;
+
+							const optionsParam = this.getNodeParameter('options', itemIndex, {}) as IDataObject;
+							if (optionsParam.code) input.code = optionsParam.code;
+							if (optionsParam.recursive_membership !== undefined) input.recursive_membership = optionsParam.recursive_membership ? 1 : 0;
+							if (optionsParam.groups_id) input.groups_id = optionsParam.groups_id;
+							if (optionsParam.comment) input.comment = optionsParam.comment;
+							if (optionsParam.is_manager !== undefined) input.is_manager = optionsParam.is_manager ? 1 : 0;
+							if (optionsParam.is_assign !== undefined) input.is_assign = optionsParam.is_assign ? 1 : 0;
+							if (optionsParam.is_task !== undefined) input.is_task = optionsParam.is_task ? 1 : 0;
+						} else {
+							Object.assign(input, this.getNodeParameter('input', itemIndex, {}) as IDataObject);
+						}
+					} else {
+						Object.assign(input, this.getNodeParameter('input', itemIndex, {}) as IDataObject);
+					}
 
 					options = {
 						method: 'PUT' as IHttpRequestMethods,
