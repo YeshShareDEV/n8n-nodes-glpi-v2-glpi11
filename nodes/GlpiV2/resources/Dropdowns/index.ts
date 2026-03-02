@@ -38,13 +38,6 @@ export const dropdownsDescription: INodeProperties[] = [
 		displayOptions: { show: { operation: ['list'], returnAll: [false], resource: ['Dropdowns'] } },
 	},
 	{
-		displayName: 'Return All',
-		name: 'returnAll',
-		type: 'boolean',
-		displayOptions: { show: { operation: ['list'], resource: ['Dropdowns'] } },
-		default: false,
-	},
-	{
 		displayName: 'Data Form',
 		name: 'dataForm',
 		type: 'collection',

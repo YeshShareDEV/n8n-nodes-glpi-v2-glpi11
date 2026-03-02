@@ -48,13 +48,7 @@ export const managementDescription: INodeProperties[] = [
 		displayOptions: { show: { operation: ['get'], returnAll: [false], resource: ['Management'] } },
 		description: 'Limite de itens retornados quando Return All for false',
 	},
-	{
-		displayName: 'Return All',
-		name: 'returnAll',
-		type: 'boolean',
-		displayOptions: { show: { operation: ['get'], resource: ['Management'] } },
-		default: false,
-	},
+
 	...managementGetDescription,
 	...managementCreateDescription,
 	...managementUpdateDescription,

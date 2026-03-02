@@ -80,13 +80,7 @@ export const setupDescription: INodeProperties[] = [
     default: 50,
     typeOptions: { minValue: 1 },
     displayOptions: { show: { operation: ['list'], returnAll: [false], resource: ['Setup'] } },
-  },
-  {
-    displayName: 'Return All',
-    name: 'returnAll',
-    type: 'boolean',
-    default: false,
-    displayOptions: { show: { operation: ['list'], resource: ['Setup'] } },
+    description: 'Limite de itens retornados quando Return All for false',
   },
 
   // Config create/update: key/value editor
@@ -127,3 +121,4 @@ export const setupDescription: INodeProperties[] = [
   ...setupDeleteDescription,
   ...setupOptionsDescription,
 ];
+
