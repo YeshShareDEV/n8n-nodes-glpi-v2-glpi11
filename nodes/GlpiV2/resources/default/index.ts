@@ -61,6 +61,23 @@ export const defaultDescription: INodeProperties[] = [
 		typeOptions: { minValue: 1 },
 		displayOptions: { show: { operation: ['dynamic'], returnAll: [false], resource: ['Default'] } },
 	},
+	{
+		displayName: 'Start',
+		name: 'start',
+		type: 'number',
+		default: 0,
+		typeOptions: { minValue: 0 },
+		displayOptions: { show: { operation: ['dynamic'], returnAll: [false], resource: ['Default'] } },
+		description: 'Offset to start returning items from (for pagination)',
+	},
+	{
+		displayName: 'Sort',
+		name: 'sort',
+		type: 'string',
+		default: '',
+		displayOptions: { show: { operation: ['dynamic'], resource: ['Default'] } },
+		description: 'Field name to sort by (server-side if supported)',
+	},
 	// Start removed per UI requirements
 	// Transfer action convenience
 	{
