@@ -15,6 +15,7 @@ import { assistanceDescription } from './resources/Assistance';
 import { AssetsDescription } from './resources/Assets';
 import { componentsDescription } from './resources/Components';
 import { dropdownsDescription } from './resources/Dropdowns';
+import { managementDescription } from './resources/Management';
 
 // Garante e normaliza a base URL terminando em /api.php
 function buildBaseUrl(host?: string) {
@@ -148,6 +149,7 @@ export class GlpiV2 implements INodeType {
 					{ name: 'Administration', value: 'Administration' },
 					{ name: 'Components', value: 'Components' },
 					{ name: 'Dropdowns', value: 'Dropdowns' },
+					{ name: 'Management', value: 'Management' },
 					{ name: 'Assistance', value: 'Assistance' },
 					{ name: 'Assets', value: 'Assets' },
 				],
@@ -167,6 +169,7 @@ export class GlpiV2 implements INodeType {
 			...AssetsDescription,
 			...componentsDescription,
 			...dropdownsDescription,
+			...managementDescription,
 		],
 	};
 
