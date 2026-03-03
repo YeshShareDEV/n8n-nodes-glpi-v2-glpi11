@@ -13,6 +13,7 @@ import { NodeConnectionTypes, ApplicationError, NodeOperationError } from 'n8n-w
 import { administrationDescription } from './resources/Administration';
 import { assistanceDescription } from './resources/Assistance';
 import { AssetsDescription } from './resources/Assets';
+import { componentsDescription } from './resources/Components';
 
 // Garante e normaliza a base URL terminando em /api.php
 function buildBaseUrl(host?: string) {
@@ -144,6 +145,7 @@ export class GlpiV2 implements INodeType {
 				noDataExpression: true,
 				options: [
 					{ name: 'Administration', value: 'Administration' },
+					{ name: 'Components', value: 'Components' },
 					{ name: 'Assistance', value: 'Assistance' },
 					{ name: 'Assets', value: 'Assets' },
 				],
@@ -161,6 +163,7 @@ export class GlpiV2 implements INodeType {
 			...administrationDescription,
 			...assistanceDescription,
 			...AssetsDescription,
+			...componentsDescription,
 		],
 	};
 
@@ -263,10 +266,15 @@ export class GlpiV2 implements INodeType {
 				// Determina o itemtype baseado no resource e operation
 				let itemtype: string = (this.getNodeParameter('itemtype', itemIndex) as string) || '';
 
-				// Support Assets, Administration and Assistance: prefix itemtype with the resource when needed.
+				// Support Assets, Administration, Assistance and Components: prefix itemtype with the resource when needed.
 				if (
 					itemtype &&
-					(resource === 'Assets' || resource === 'Administration' || resource === 'Assistance') &&
+					(
+						resource === 'Assets' ||
+						resource === 'Administration' ||
+						resource === 'Assistance' ||
+						resource === 'Components'
+					) &&
 					!itemtype.includes('/')
 				) {
 					itemtype = `${resource}/${itemtype}`;
