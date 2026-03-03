@@ -300,17 +300,55 @@ export class GlpiV2 implements INodeType {
 
 					if (itemtype && !itemtype.includes('/')) itemtype = `${resource}/${itemtype}`;
 
-					// Build URL and apply pagination query params when an ID is not requested
-					let url = `${baseUrl}/${itemtype}${id ? '/' + id : ''}`;
-					if (!id && returnAll === false) {
-						const params: string[] = [];
+					// Build URL and apply resource-specific behavior
+					let url = '';
 
-						// Only include limit
-						const limit = this.getNodeParameter('limit', itemIndex, 10) as number;
-						params.push(`limit=${limit}`);
+					if (resource === 'Components') {
+						// components: support Definitions and Instances endpoints
+						const componentType = itemtype.includes('/') ? itemtype.split('/')[1] : itemtype;
+						const endpoint = this.getNodeParameter('componentsEndpoint', itemIndex, 'definitions') as string;
+						if (endpoint === 'instances') {
+							url = `${baseUrl}/Components/${componentType}/Items${id ? '/' + id : ''}`;
+							if (!id && returnAll === false) {
+								const params: string[] = [];
+								const limit = this.getNodeParameter('limit', itemIndex, 50) as number;
+								params.push(`limit=${limit}`);
+								const definitionId = this.getNodeParameter('definitionId', itemIndex, 0) as number;
+								if (definitionId) params.push(`definition_id=${definitionId}`);
+								if (params.length) url += (url.includes('?') ? '&' : '?') + params.join('&');
+							}
+						} else {
+							url = `${baseUrl}/Components/${componentType}${id ? '/' + id : ''}`;
+							if (!id && returnAll === false) {
+								const params: string[] = [];
+								const limit = this.getNodeParameter('limit', itemIndex, 50) as number;
+								params.push(`limit=${limit}`);
+								if (params.length) url += (url.includes('?') ? '&' : '?') + params.join('&');
+							}
+						}
+					} else {
+						// default behavior for other resources (including Assistance)
+						url = `${baseUrl}/${itemtype}${id ? '/' + id : ''}`;
+						if (!id && returnAll === false) {
+							const params: string[] = [];
+							const limit = this.getNodeParameter('limit', itemIndex, 10) as number;
+							params.push(`limit=${limit}`);
+							if (params.length) {
+								url += (url.includes('?') ? '&' : '?') + params.join('&');
+							}
+						}
+					}
 
-						if (params.length) {
-							url += (url.includes('?') ? '&' : '?') + params.join('&');
+					// Assistance: append timeline params when requested
+					if (resource === 'Assistance') {
+						const includeTimeline = this.getNodeParameter('includeTimeline', itemIndex, false) as boolean;
+						if (includeTimeline) {
+							const timelineTypes = this.getNodeParameter('timelineTypes', itemIndex, []) as string[];
+							const timelineParams: string[] = ['with_timeline=1'];
+							if (Array.isArray(timelineTypes) && timelineTypes.length) {
+								timelineParams.push(`timeline_types=${timelineTypes.join(',')}`);
+							}
+							url += (url.includes('?') ? '&' : '?') + timelineParams.join('&');
 						}
 					}
 
@@ -369,10 +407,7 @@ export class GlpiV2 implements INodeType {
 					} else if (resource === 'Assistance') {
 						input.name = this.getNodeParameter('title', itemIndex) as string;
 						input.content = this.getNodeParameter('description', itemIndex) as string;
-						input.status =
-							(this.getNodeParameter('status_ticket', itemIndex, 0) as number) ||
-							(this.getNodeParameter('status_problem', itemIndex, 0) as number) ||
-							(this.getNodeParameter('status_change', itemIndex, 0) as number);
+						input.status = this.getNodeParameter('status', itemIndex, 0) as number;
 
 						const optionsParam = this.getNodeParameter('options', itemIndex, {}) as IDataObject;
 						if (optionsParam.itilcategories_id) input.itilcategories_id = optionsParam.itilcategories_id;
@@ -383,17 +418,58 @@ export class GlpiV2 implements INodeType {
 
 						const assign = this.getNodeParameter('users_id_assign', itemIndex, 0) as number;
 						if (assign) input._users_id_assign = assign;
+					} else if (resource === 'Components') {
+						// Components: decide whether to create a definition or an instance
+						const componentType = itemtype.includes('/') ? itemtype.split('/')[1] : itemtype;
+						const createInstance = this.getNodeParameter('createInstance', itemIndex, false) as boolean;
+						if (createInstance) {
+							// create instance under definitionId
+							const definitionId = this.getNodeParameter('definitionId', itemIndex, 0) as number;
+							if (!definitionId) {
+								if (this.continueOnFail()) {
+									returnData.push({ json: { error: 'definitionId is required when creating an instance' }, pairedItem: { item: itemIndex } });
+									continue;
+								}
+								throw new ApplicationError('definitionId is required when creating an instance', { level: 'error' });
+							}
+							// ensure basic title/description
+							input.name = this.getNodeParameter('title', itemIndex, '') as string;
+							if (!input.name) input.name = `Instance of ${componentType}`;
+							options = {
+								method: 'POST' as IHttpRequestMethods,
+								url: `${baseUrl}/Components/${componentType}/Items`,
+								headers,
+								body: { input },
+								json: true,
+							};
+						} else {
+							// create definition
+							input.name = this.getNodeParameter('title', itemIndex) as string;
+							options = {
+								method: 'POST' as IHttpRequestMethods,
+								url: `${baseUrl}/Components/${componentType}`,
+								headers,
+								body: { input },
+								json: true,
+							};
+						}
+						// options already set above for Components
+				
 					} else {
 						Object.assign(input, this.getNodeParameter('input', itemIndex, {}) as IDataObject);
 					}
 
-					options = {
-						method: 'POST' as IHttpRequestMethods,
-						url: `${baseUrl}/${itemtype}`,
-						headers,
-						body: { input },
-						json: true,
-					};
+					// If options were not set by a resource-specific handler (e.g. Components), use default POST to itemtype
+					if (!options) {
+						options = {
+							method: 'POST' as IHttpRequestMethods,
+							url: `${baseUrl}/${itemtype}`,
+							headers,
+							body: { input },
+							json: true,
+						};
+					}
+
 				} else if (normalizedOperation === 'update') {
 					const id = this.getNodeParameter('itemid', itemIndex);
 					const input: IDataObject = {};
@@ -461,10 +537,7 @@ export class GlpiV2 implements INodeType {
 						const description = this.getNodeParameter('description', itemIndex, '') as string;
 						if (description) input.content = description;
 
-						const status =
-							(this.getNodeParameter('status_ticket', itemIndex, 0) as number) ||
-							(this.getNodeParameter('status_problem', itemIndex, 0) as number) ||
-							(this.getNodeParameter('status_change', itemIndex, 0) as number);
+						const status = this.getNodeParameter('status', itemIndex, 0) as number;
 						if (status) input.status = status;
 
 						const optionsParam = this.getNodeParameter('options', itemIndex, {}) as IDataObject;

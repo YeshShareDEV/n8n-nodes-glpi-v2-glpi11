@@ -16,7 +16,8 @@ export class GlpiV2Api implements ICredentialType {
 			headers: {
 				'Content-Type': 'application/json',
 			},
-			body: '={ "grant_type": "password", "client_id": "{{$credentials.clientId}}", "client_secret": "{{$credentials.clientSecret}}", "username": "{{$credentials.username}}", "password": "{{$credentials.password}}", "scope": "{{$credentials.scope}}" }',
+			body:
+				'={{ $credentials.useAuthorizationCode && $credentials.authorizationCode ? `{"grant_type":"authorization_code","client_id":"${"{{$credentials.clientId}}"}","client_secret":"${"{{$credentials.clientSecret}}"}","code":"${"{{$credentials.authorizationCode}}"}","redirect_uri":"${"{{$credentials.redirectUri}}"}"}` : `{"grant_type":"password","client_id":"${"{{$credentials.clientId}}"}","client_secret":"${"{{$credentials.clientSecret}}"}","username":"${"{{$credentials.username}}"}","password":"${"{{$credentials.password}}"}","scope":"${"{{$credentials.scope}}"}"}` }}',
 		},
 	};
 
@@ -29,6 +30,45 @@ export class GlpiV2Api implements ICredentialType {
 			placeholder: 'https://glpi.example.com',
 			required: true,
 			description: 'URL base do GLPI (sem /api.php/v.21 - será adicionado automaticamente)',
+		},
+		{
+			displayName: 'Use Authorization Code Flow',
+			name: 'useAuthorizationCode',
+			type: 'boolean',
+			default: false,
+			description: 'Enable to use the authorization-code flow: open the authorization URL, paste the returned code and exchange it for a token.',
+		},
+		{
+			displayName: 'Redirect URI',
+			name: 'redirectUri',
+			type: 'string',
+			default: '',
+			description: 'Redirect URI configured on the OAuth client. Required for authorization code flow.',
+		},
+		{
+			displayName: 'State',
+			name: 'state',
+			type: 'string',
+			default: '',
+			description: 'Optional state value to include in the authorization request and verify on return.',
+		},
+		{
+			displayName: 'Authorization Code',
+			name: 'authorizationCode',
+			type: 'string',
+			default: '',
+			description: 'Paste the authorization code received from the authorize endpoint here, then run the credential test to exchange it for a token.',
+		},
+
+		{
+			displayName: 'Authorization Guide',
+			name: 'authorizationGuide',
+			type: 'notice',
+			default: '',
+			description:
+				'To start the interactive flow, open the authorization URL in a browser:\n' +
+				'{{$credentials.host.replace(/\\/+$/, "")}}/api.php/authorize?response_type=code&client_id={{$credentials.clientId}}&redirect_uri={{$credentials.redirectUri}}&scope={{$credentials.scope}}&state={{$credentials.state}}\n' +
+				'After the redirect, copy the returned `code` into the Authorization Code field and run the credential test to exchange it for a token. For server-side flows, POST to /api.php/authorize with the required params.',
 		},
 		{
 			displayName: 'Scope',
