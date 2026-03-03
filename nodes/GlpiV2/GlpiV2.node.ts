@@ -9,6 +9,7 @@ import type {
 } from 'n8n-workflow';
 import { NodeConnectionTypes, ApplicationError, NodeOperationError } from 'n8n-workflow';
 import { administrationDescription } from './resources/Administration';
+import { assistanceDescription } from './resources/Assistance';
 import { AssetsDescription } from './resources/Assets';
 
 // Garante e normaliza a base URL terminando em /api.php
@@ -129,6 +130,7 @@ export class GlpiV2 implements INodeType {
 				noDataExpression: true,
 				options: [
 					{ name: 'Administration', value: 'Administration' },
+					{ name: 'Assistance', value: 'Assistance' },
 					{ name: 'Assets', value: 'Assets' },
 				],
 				default: 'Assets',
@@ -143,6 +145,7 @@ export class GlpiV2 implements INodeType {
 
 			// 'Limit' field removed from main node properties.
 			...administrationDescription,
+			...assistanceDescription,
 			...AssetsDescription,
 		],
 	};
@@ -163,8 +166,12 @@ export class GlpiV2 implements INodeType {
 				// Determina o itemtype baseado no resource e operation
 				let itemtype: string = (this.getNodeParameter('itemtype', itemIndex) as string) || '';
 
-				// Support Assets and Administration: prefix itemtype with the resource when needed.
-				if (itemtype && (resource === 'Assets' || resource === 'Administration') && !itemtype.includes('/')) {
+				// Support Assets, Administration and Assistance: prefix itemtype with the resource when needed.
+				if (
+					itemtype &&
+					(resource === 'Assets' || resource === 'Administration' || resource === 'Assistance') &&
+					!itemtype.includes('/')
+				) {
 					itemtype = `${resource}/${itemtype}`;
 				}
 
@@ -212,8 +219,7 @@ export class GlpiV2 implements INodeType {
 				if (normalizedOperation === 'get') {
 					const id = this.getNodeParameter('itemid', itemIndex, '') as string | number;
 
-					// Ensure Assets prefix
-					if (itemtype && !itemtype.includes('/')) itemtype = `Assets/${itemtype}`;
+					if (itemtype && !itemtype.includes('/')) itemtype = `${resource}/${itemtype}`;
 
 					// Build URL and apply pagination query params when an ID is not requested
 					let url = `${baseUrl}/${itemtype}${id ? '/' + id : ''}`;
@@ -281,6 +287,23 @@ export class GlpiV2 implements INodeType {
 						} else {
 							Object.assign(input, this.getNodeParameter('input', itemIndex, {}) as IDataObject);
 						}
+					} else if (resource === 'Assistance') {
+						input.name = this.getNodeParameter('title', itemIndex) as string;
+						input.content = this.getNodeParameter('description', itemIndex) as string;
+						input.status =
+							(this.getNodeParameter('status_ticket', itemIndex, 0) as number) ||
+							(this.getNodeParameter('status_problem', itemIndex, 0) as number) ||
+							(this.getNodeParameter('status_change', itemIndex, 0) as number);
+
+						const optionsParam = this.getNodeParameter('options', itemIndex, {}) as IDataObject;
+						if (optionsParam.itilcategories_id) input.itilcategories_id = optionsParam.itilcategories_id;
+						if (optionsParam.users_id_observer) input._users_id_observer = optionsParam.users_id_observer;
+
+						const requester = this.getNodeParameter('users_id_requester', itemIndex, '') as string;
+						if (requester) input._users_id_requester = requester;
+
+						const assign = this.getNodeParameter('users_id_assign', itemIndex, 0) as number;
+						if (assign) input._users_id_assign = assign;
 					} else {
 						Object.assign(input, this.getNodeParameter('input', itemIndex, {}) as IDataObject);
 					}
@@ -352,6 +375,28 @@ export class GlpiV2 implements INodeType {
 						} else {
 							Object.assign(input, this.getNodeParameter('input', itemIndex, {}) as IDataObject);
 						}
+					} else if (resource === 'Assistance') {
+						const title = this.getNodeParameter('title', itemIndex, '') as string;
+						if (title) input.name = title;
+
+						const description = this.getNodeParameter('description', itemIndex, '') as string;
+						if (description) input.content = description;
+
+						const status =
+							(this.getNodeParameter('status_ticket', itemIndex, 0) as number) ||
+							(this.getNodeParameter('status_problem', itemIndex, 0) as number) ||
+							(this.getNodeParameter('status_change', itemIndex, 0) as number);
+						if (status) input.status = status;
+
+						const optionsParam = this.getNodeParameter('options', itemIndex, {}) as IDataObject;
+						if (optionsParam.itilcategories_id) input.itilcategories_id = optionsParam.itilcategories_id;
+						if (optionsParam.users_id_observer) input._users_id_observer = optionsParam.users_id_observer;
+
+						const requester = this.getNodeParameter('users_id_requester', itemIndex, '') as string;
+						if (requester) input._users_id_requester = requester;
+
+						const assign = this.getNodeParameter('users_id_assign', itemIndex, 0) as number;
+						if (assign) input._users_id_assign = assign;
 					} else {
 						Object.assign(input, this.getNodeParameter('input', itemIndex, {}) as IDataObject);
 					}
@@ -365,7 +410,7 @@ export class GlpiV2 implements INodeType {
 					};
 				} else if (operation === 'delete') {
 					const id = this.getNodeParameter('itemid', itemIndex);
-					if (itemtype && !itemtype.includes('/')) itemtype = `Assets/${itemtype}`;
+					if (itemtype && !itemtype.includes('/')) itemtype = `${resource}/${itemtype}`;
 					options = {
 						method: 'DELETE' as IHttpRequestMethods,
 						url: `${baseUrl}/${itemtype}/${id}`,
