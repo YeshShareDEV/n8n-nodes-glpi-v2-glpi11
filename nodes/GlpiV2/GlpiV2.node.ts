@@ -63,25 +63,37 @@ async function getOAuthToken(
 	baseUrl: string,
 	clientId: string,
 	clientSecret: string,
-	username: string,
-	password: string,
+	username?: string,
+	password?: string,
 	scope?: string,
+	authorizationCode?: string,
+	redirectUri?: string,
 ): Promise<string> {
 	try {
+		const body: any = authorizationCode
+			? {
+				  grant_type: 'authorization_code',
+				  client_id: clientId,
+				  client_secret: clientSecret,
+				  code: authorizationCode,
+				  redirect_uri: redirectUri,
+			  }
+			: {
+				  grant_type: 'password',
+				  client_id: clientId,
+				  client_secret: clientSecret,
+				  username,
+				  password,
+				  scope,
+			  };
+
 		const response = await this.helpers.httpRequest({
 			method: 'POST',
 			url: `${baseUrl}/token`,
 			headers: {
 				'Content-Type': 'application/json',
 			},
-			body: {
-				grant_type: 'password',
-				client_id: clientId,
-				client_secret: clientSecret,
-				username,
-				password,
-				scope,
-			},
+			body,
 			json: true,
 		});
 
@@ -166,6 +178,8 @@ export class GlpiV2 implements INodeType {
 					creds.username as string,
 					creds.password as string,
 					(creds.scope as string) || undefined,
+					(creds.useAuthorizationCode as boolean) ? (creds.authorizationCode as string) : undefined,
+					(creds.redirectUri as string) || undefined,
 				);
 
 				const response = await (self.helpers as any).httpRequest({
@@ -190,6 +204,8 @@ export class GlpiV2 implements INodeType {
 					creds.username as string,
 					creds.password as string,
 					(creds.scope as string) || undefined,
+					(creds.useAuthorizationCode as boolean) ? (creds.authorizationCode as string) : undefined,
+					(creds.redirectUri as string) || undefined,
 				);
 
 				const response = await (self.helpers as any).httpRequest({
@@ -214,6 +230,8 @@ export class GlpiV2 implements INodeType {
 					creds.username as string,
 					creds.password as string,
 					(creds.scope as string) || undefined,
+					(creds.useAuthorizationCode as boolean) ? (creds.authorizationCode as string) : undefined,
+					(creds.redirectUri as string) || undefined,
 				);
 
 				const response = await (self.helpers as any).httpRequest({
@@ -254,7 +272,7 @@ export class GlpiV2 implements INodeType {
 					itemtype = `${resource}/${itemtype}`;
 				}
 
-				let options: IHttpRequestOptions;
+				let options: IHttpRequestOptions | undefined;
 
 				// Normaliza a operation para get/create/update
 				let normalizedOperation = operation;
@@ -279,6 +297,8 @@ export class GlpiV2 implements INodeType {
 						creds.username as string,
 						creds.password as string,
 						(creds.scope as string) || undefined,
+						(creds.useAuthorizationCode as boolean) ? (creds.authorizationCode as string) : undefined,
+						(creds.redirectUri as string) || undefined,
 					);
 				} catch (err) {
 					if (this.continueOnFail()) {
@@ -553,22 +573,47 @@ export class GlpiV2 implements INodeType {
 						Object.assign(input, this.getNodeParameter('input', itemIndex, {}) as IDataObject);
 					}
 
-					options = {
-						method: 'PUT' as IHttpRequestMethods,
-						url: `${baseUrl}/${itemtype}/${id}`,
-						headers,
-						body: { input },
-						json: true,
-					};
+					if (resource === 'Components') {
+						const componentType = itemtype.includes('/') ? itemtype.split('/')[1] : itemtype;
+						const endpoint = this.getNodeParameter('componentsEndpoint', itemIndex, 'definitions') as string;
+						const url = endpoint === 'instances' ? `${baseUrl}/Components/${componentType}/Items/${id}` : `${baseUrl}/Components/${componentType}/${id}`;
+						options = {
+							method: 'PUT' as IHttpRequestMethods,
+							url,
+							headers,
+							body: { input },
+							json: true,
+						};
+					} else {
+						options = {
+							method: 'PUT' as IHttpRequestMethods,
+							url: `${baseUrl}/${itemtype}/${id}`,
+							headers,
+							body: { input },
+							json: true,
+						};
+					}
 				} else if (operation === 'delete') {
 					const id = this.getNodeParameter('itemid', itemIndex);
-					if (itemtype && !itemtype.includes('/')) itemtype = `${resource}/${itemtype}`;
-					options = {
-						method: 'DELETE' as IHttpRequestMethods,
-						url: `${baseUrl}/${itemtype}/${id}`,
-						headers,
-						json: true,
-					};
+					if (resource === 'Components') {
+						const componentType = itemtype.includes('/') ? itemtype.split('/')[1] : itemtype;
+						const endpoint = this.getNodeParameter('componentsEndpoint', itemIndex, 'definitions') as string;
+						const url = endpoint === 'instances' ? `${baseUrl}/Components/${componentType}/Items/${id}` : `${baseUrl}/Components/${componentType}/${id}`;
+						options = {
+							method: 'DELETE' as IHttpRequestMethods,
+							url,
+							headers,
+							json: true,
+						};
+					} else {
+						if (itemtype && !itemtype.includes('/')) itemtype = `${resource}/${itemtype}`;
+						options = {
+							method: 'DELETE' as IHttpRequestMethods,
+							url: `${baseUrl}/${itemtype}/${id}`,
+							headers,
+							json: true,
+						};
+					}
 				} else {
 					throw new ApplicationError(`Unknown operation: ${operation}`, { level: 'warning' });
 				}
