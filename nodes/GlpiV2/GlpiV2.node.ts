@@ -6,6 +6,8 @@ import type {
 	IHttpRequestMethods,
 	IHttpRequestOptions,
 	IDataObject,
+	ILoadOptionsFunctions,
+	INodePropertyOptions,
 } from 'n8n-workflow';
 import { NodeConnectionTypes, ApplicationError, NodeOperationError } from 'n8n-workflow';
 import { administrationDescription } from './resources/Administration';
@@ -150,14 +152,14 @@ export class GlpiV2 implements INodeType {
 		],
 	};
 
-	methods = {
+	methods: INodeType['methods'] = {
 		loadOptions: {
-			async getEntities(this: INodeType) {
-				const self = this as unknown as IExecuteFunctions;
+			async getEntities(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
+				const self = this as ILoadOptionsFunctions;
 				const creds = await self.getCredentials('glpiV2Api');
 				const baseUrl = buildBaseUrl(creds.host as string);
 				const token = await getOAuthToken.call(
-					self,
+					self as unknown as IExecuteFunctions,
 					baseUrl,
 					creds.clientId as string,
 					creds.clientSecret as string,
@@ -166,7 +168,7 @@ export class GlpiV2 implements INodeType {
 					(creds.scope as string) || undefined,
 				);
 
-				const response = await self.helpers.httpRequest({
+				const response = await (self.helpers as any).httpRequest({
 					method: 'GET',
 					url: `${baseUrl}/Administration/Entity`,
 					headers: { Authorization: `Bearer ${token}` },
@@ -176,12 +178,12 @@ export class GlpiV2 implements INodeType {
 				const list = Array.isArray(response) ? response : response?.data || [];
 				return list.map((r: any) => ({ name: r.name || r.realname || r.label || `${r.id}`, value: r.id }));
 			},
-			async getProfiles(this: INodeType) {
-				const self = this as unknown as IExecuteFunctions;
+			async getProfiles(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
+				const self = this as ILoadOptionsFunctions;
 				const creds = await self.getCredentials('glpiV2Api');
 				const baseUrl = buildBaseUrl(creds.host as string);
 				const token = await getOAuthToken.call(
-					self,
+					self as unknown as IExecuteFunctions,
 					baseUrl,
 					creds.clientId as string,
 					creds.clientSecret as string,
@@ -190,7 +192,7 @@ export class GlpiV2 implements INodeType {
 					(creds.scope as string) || undefined,
 				);
 
-				const response = await self.helpers.httpRequest({
+				const response = await (self.helpers as any).httpRequest({
 					method: 'GET',
 					url: `${baseUrl}/Administration/Profile`,
 					headers: { Authorization: `Bearer ${token}` },
@@ -200,12 +202,12 @@ export class GlpiV2 implements INodeType {
 				const list = Array.isArray(response) ? response : response?.data || [];
 				return list.map((r: any) => ({ name: r.name || r.label || `${r.id}`, value: r.id }));
 			},
-			async getGroups(this: INodeType) {
-				const self = this as unknown as IExecuteFunctions;
+			async getGroups(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
+				const self = this as ILoadOptionsFunctions;
 				const creds = await self.getCredentials('glpiV2Api');
 				const baseUrl = buildBaseUrl(creds.host as string);
 				const token = await getOAuthToken.call(
-					self,
+					self as unknown as IExecuteFunctions,
 					baseUrl,
 					creds.clientId as string,
 					creds.clientSecret as string,
@@ -214,7 +216,7 @@ export class GlpiV2 implements INodeType {
 					(creds.scope as string) || undefined,
 				);
 
-				const response = await self.helpers.httpRequest({
+				const response = await (self.helpers as any).httpRequest({
 					method: 'GET',
 					url: `${baseUrl}/Administration/Group`,
 					headers: { Authorization: `Bearer ${token}` },
