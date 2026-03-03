@@ -150,6 +150,83 @@ export class GlpiV2 implements INodeType {
 		],
 	};
 
+	methods = {
+		loadOptions: {
+			async getEntities(this: INodeType) {
+				const self = this as unknown as IExecuteFunctions;
+				const creds = await self.getCredentials('glpiV2Api');
+				const baseUrl = buildBaseUrl(creds.host as string);
+				const token = await getOAuthToken.call(
+					self,
+					baseUrl,
+					creds.clientId as string,
+					creds.clientSecret as string,
+					creds.username as string,
+					creds.password as string,
+					(creds.scope as string) || undefined,
+				);
+
+				const response = await self.helpers.httpRequest({
+					method: 'GET',
+					url: `${baseUrl}/Administration/Entity`,
+					headers: { Authorization: `Bearer ${token}` },
+					json: true,
+				});
+
+				const list = Array.isArray(response) ? response : response?.data || [];
+				return list.map((r: any) => ({ name: r.name || r.realname || r.label || `${r.id}`, value: r.id }));
+			},
+			async getProfiles(this: INodeType) {
+				const self = this as unknown as IExecuteFunctions;
+				const creds = await self.getCredentials('glpiV2Api');
+				const baseUrl = buildBaseUrl(creds.host as string);
+				const token = await getOAuthToken.call(
+					self,
+					baseUrl,
+					creds.clientId as string,
+					creds.clientSecret as string,
+					creds.username as string,
+					creds.password as string,
+					(creds.scope as string) || undefined,
+				);
+
+				const response = await self.helpers.httpRequest({
+					method: 'GET',
+					url: `${baseUrl}/Administration/Profile`,
+					headers: { Authorization: `Bearer ${token}` },
+					json: true,
+				});
+
+				const list = Array.isArray(response) ? response : response?.data || [];
+				return list.map((r: any) => ({ name: r.name || r.label || `${r.id}`, value: r.id }));
+			},
+			async getGroups(this: INodeType) {
+				const self = this as unknown as IExecuteFunctions;
+				const creds = await self.getCredentials('glpiV2Api');
+				const baseUrl = buildBaseUrl(creds.host as string);
+				const token = await getOAuthToken.call(
+					self,
+					baseUrl,
+					creds.clientId as string,
+					creds.clientSecret as string,
+					creds.username as string,
+					creds.password as string,
+					(creds.scope as string) || undefined,
+				);
+
+				const response = await self.helpers.httpRequest({
+					method: 'GET',
+					url: `${baseUrl}/Administration/Group`,
+					headers: { Authorization: `Bearer ${token}` },
+					json: true,
+				});
+
+				const list = Array.isArray(response) ? response : response?.data || [];
+				return list.map((r: any) => ({ name: r.name || r.realname || `${r.id}`, value: r.id }));
+			},
+		},
+	};
+
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
 		const items = this.getInputData();
 		const returnData: INodeExecutionData[] = [];
