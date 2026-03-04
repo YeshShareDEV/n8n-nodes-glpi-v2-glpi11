@@ -36,4 +36,22 @@ export const assistanceGetDescription: INodeProperties[] = [
 		description:
 			'GET: provide `Item ID` to fetch a single item, or leave empty to list items. When `Include Timeline` is enabled, timeline entries will be included.',
 	},
+
+	{
+		displayName: 'Filters',
+		name: 'filters',
+		type: 'collection',
+		placeholder: 'Add filter',
+		default: {},
+		displayOptions: { show: { operation: ['get'], resource: ['Assistance'] } },
+		options: [
+			{
+				displayName: 'Filter String',
+				name: 'filter',
+				type: 'string',
+				default: '',
+				description: 'Exemplo: name=ilike=*Yesh*',
+			},
+		],
+	},
 ];
