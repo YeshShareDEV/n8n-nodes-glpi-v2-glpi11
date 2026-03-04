@@ -1,6 +1,6 @@
 import type { INodeProperties } from 'n8n-workflow';
 import { ruleGetDescription } from './get';
-import { ruleCreateDescription } from './create'; 
+import { ruleCreateDescription } from './create';
 import { ruleUpdateDescription } from './update';
 import { ruleDeleteDescription } from './delete';
 import { ruleOptionsDescription } from './options';
