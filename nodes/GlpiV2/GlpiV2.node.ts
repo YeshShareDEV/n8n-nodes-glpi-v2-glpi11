@@ -377,6 +377,14 @@ export class GlpiV2 implements INodeType {
 							const params: string[] = [];
 							const limit = this.getNodeParameter('limit', itemIndex, 10) as number;
 							params.push(`limit=${limit}`);
+							// Support `filter` string for Assets resource (defined in resources/Assets/get.ts)
+							if (resource === 'Assets') {
+								const filtersParam = this.getNodeParameter('filters', itemIndex, {}) as IDataObject;
+								const filterStr = (filtersParam && (filtersParam as any).filter) || '';
+								if (filterStr) {
+									params.push(`filter=${encodeURIComponent(filterStr)}`);
+								}
+							}
 							if (params.length) {
 								url += (url.includes('?') ? '&' : '?') + params.join('&');
 							}
