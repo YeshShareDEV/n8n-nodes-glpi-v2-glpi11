@@ -25,4 +25,21 @@ export const administrationGetDescription: INodeProperties[] = [
 		description:
 			'GET: provide `Item ID` to fetch a single item, or leave empty to list items. Example route: /api.php/Administration/User/123',
 	},
+	{
+		displayName: 'Filters',
+		name: 'filters',
+		type: 'collection',
+		placeholder: 'Add filter',
+		default: {},
+		displayOptions: { show: { operation: ['get'], resource: ['Administration'] } },
+		options: [
+			{
+				displayName: 'Filter String',
+				name: 'filter',
+				type: 'string',
+				default: '',
+				description: 'Example: name=ilike=*Yesh*',
+			},
+		],
+	},
 ];
