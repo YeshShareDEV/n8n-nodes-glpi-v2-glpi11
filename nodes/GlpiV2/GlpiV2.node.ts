@@ -419,7 +419,6 @@ export class GlpiV2 implements INodeType {
 							// in the `Input (raw)` field. Use `Send raw body` to control whether the
 							// object is sent directly or wrapped as { input }.
 							const rawInput = this.getNodeParameter('input', itemIndex, {}) as IDataObject;
-							const sendRawBody = this.getNodeParameter('sendRawBody', itemIndex, false) as boolean;
 							if (!rawInput || Object.keys(rawInput).length === 0) {
 								if (this.continueOnFail()) {
 									returnData.push({ json: { error: 'Input (raw) is required when creating Administration/User' }, pairedItem: { item: itemIndex } });
