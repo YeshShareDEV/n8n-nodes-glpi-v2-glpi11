@@ -2,110 +2,59 @@ import type { INodeProperties } from 'n8n-workflow';
 
 export const administrationCreateDescription: INodeProperties[] = [
 	{
-		displayName: 'Item Type',
-		name: 'itemtype',
-		type: 'options',
-		description: 'Select which Administration sub-resource to create',
-		default: 'Administration/User',
-		options: [
-			{ name: 'Entity', value: 'Administration/Entity' },
-			{ name: 'Group', value: 'Administration/Group' },
-			{ name: 'Profile', value: 'Administration/Profile' },
-			{ name: 'User', value: 'Administration/User' },
-		],
-		displayOptions: { show: { resource: ['Administration'], operation: ['create'] } },
-	},
+ 		displayName: 'Item Type',
+ 		name: 'itemtype',
+ 		type: 'options',
+ 		description: 'Select which Administration sub-resource to create',
+ 		default: 'Administration/User',
+ 		options: [
+ 			{ name: 'Entity', value: 'Administration/Entity' },
+ 			{ name: 'Group', value: 'Administration/Group' },
+ 			{ name: 'Profile', value: 'Administration/Profile' },
+ 			{ name: 'User', value: 'Administration/User' },
+ 		],
+ 		displayOptions: { show: { resource: ['Administration'], operation: ['create'] } },
+ 	},
 
-	// User create fields
-	{
-		displayName: 'Name',
-		name: 'name',
-		type: 'string',
-		default: '',
-		displayOptions: { show: { resource: ['Administration'], operation: ['create'], itemtype: ['Administration/User'] } },
-	},
-	{
-		displayName: 'Entity',
-		name: 'entities_id',
-		type: 'options',
-		typeOptions: { loadOptionsMethod: 'getEntities' },
-		default: '',
-		displayOptions: { show: { resource: ['Administration'], operation: ['create'], itemtype: ['Administration/User'] } },
-		description: 'Entity to associate with the user',
-	},
-	{
-		displayName: 'Profiles',
-		name: 'profiles_id',
-		type: 'multiOptions',
-		typeOptions: { loadOptionsMethod: 'getProfiles' },
-		default: [],
-		displayOptions: { show: { resource: ['Administration'], operation: ['create'], itemtype: ['Administration/User'] } },
-		description: 'Profiles to assign to the user',
-	},
-	{
-		displayName: 'First Name',
-		name: 'firstname',
-		type: 'string',
-		default: '',
-		displayOptions: { show: { resource: ['Administration'], operation: ['create'], itemtype: ['Administration/User'] } },
-	},
-	{
-		displayName: 'Email',
-		name: 'email',
-		type: 'string',
-		default: '',
-		displayOptions: { show: { resource: ['Administration'], operation: ['create'], itemtype: ['Administration/User'] } },
-	},
-	{
-		displayName: 'Password',
-		name: 'password',
-		type: 'string',
-		typeOptions: { password: true },
-		default: '',
-		displayOptions: { show: { resource: ['Administration'], operation: ['create'], itemtype: ['Administration/User'] } },
-	},
-
-	// Group create fields
-	{
-		displayName: 'Group Name',
-		name: 'groupName',
-		type: 'string',
-		default: '',
-		displayOptions: { show: { resource: ['Administration'], operation: ['create'], itemtype: ['Administration/Group'] } },
-	},
-	{
-		displayName: 'Parent Groups',
-		name: 'groups_id',
-		type: 'multiOptions',
-		typeOptions: { loadOptionsMethod: 'getGroups' },
-		default: [],
-		displayOptions: { show: { resource: ['Administration'], operation: ['create'], itemtype: ['Administration/Group'] } },
-		description: 'Parent groups (optional)',
-	},
-	{
-		displayName: 'Is Requester',
-		name: 'is_requester',
-		type: 'boolean',
-		default: true,
-		displayOptions: { show: { resource: ['Administration'], operation: ['create'], itemtype: ['Administration/Group'] } },
-	},
-
-	// Profile and Entity minimal fields
-	{
-		displayName: 'Label',
-		name: 'label',
-		type: 'string',
-		default: '',
-		displayOptions: { show: { resource: ['Administration'], operation: ['create'], itemtype: ['Administration/Profile','Administration/Entity'] } },
-	},
-
-	// Generic input fallback
+	// The node now expects a raw JSON payload for Administration/User
 	{
 		displayName: 'Input (raw)',
 		name: 'input',
 		type: 'json',
-		default: '',
-		description: 'Raw JSON payload when more specific fields are not shown',
+		default: {
+			id: 132,
+			username: 'teste2@teste.com',
+			realname: 'Teste inclusão',
+			firstname: 'Teste',
+			password: '123456',
+			password2: '123456',
+			phone: '',
+			phone2: '',
+			mobile: '',
+			emails: [
+				{ email: 'teste1@teste.com', is_default: true, is_dynamic: true },
+			],
+			comment: 'string',
+			is_active: true,
+			is_deleted: false,
+			picture: null,
+			date_password_change: '2024-08-07T04:46:21+00:00',
+			authtype: 1,
+			last_login: '2026-03-06T12:16:33+00:00',
+			location: { id: 0 },
+			default_profile: { id: 1 },
+			default_entity: { id: 0, name: 'Entidade raiz' },
+		},
+		description: 'Raw JSON payload when creating Administration resources (e.g. Administration/User)',
+		displayOptions: { show: { resource: ['Administration'], operation: ['create'] } },
+	},
+
+	{
+		displayName: 'Send raw body',
+		name: 'sendRawBody',
+		type: 'boolean',
+		default: true,
+		description: 'When enabled, the JSON provided in "Input (raw)" will be sent as the request body exactly as-is (no wrapper { input }).',
 		displayOptions: { show: { resource: ['Administration'], operation: ['create'] } },
 	},
 ];

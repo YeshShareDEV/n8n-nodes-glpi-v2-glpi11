@@ -318,3 +318,46 @@ Se quiser, o próximo passo ideal é:
 3. 🧠 Campos dinâmicos por itemtype
 4. 🛡 Validação inteligente de payload
 5. 🗑 Delete item
+
+---
+
+## 📤 Envio de JSON bruto (opção `Send raw body`)
+
+Ao criar ou atualizar recursos de `Administration` (ex.: `Administration/User`), o node normalmente envia o payload no formato `{ "input": { ... } }`.
+
+Para permitir enviar exatamente o mesmo JSON que você usaria no Postman ou via cURL (sem o wrapper `{ input }`), foi adicionada a opção `Send raw body` no formulário de `create` e `update` da seção `Administration`.
+
+Como usar:
+
+- Cole o JSON que você quer enviar no campo `Input (raw)` do node.
+- Ative `Send raw body`.
+- Execute o node — o objeto que você colou será enviado diretamente como corpo da requisição (Content-Type: application/json).
+
+Comportamento quando `Send raw body` = false (padrão):
+
+- O node continuará a montar o corpo como `{ "input": <objeto> }` usando os campos do formulário (Name, Email, Profiles, etc.) ou o `Input (raw)` quando aplicável.
+
+Exemplo (cURL original que você forneceu):
+
+```
+POST https://glpi.example.com/api.php/Administration/User
+Content-Type: application/json
+
+{
+  "id": 132,
+  "username": "teste@teste.com",
+  "realname": "Teste inclusão",
+  "firstname": "Teste",
+  "password": "123456",
+  "password2": "123456",
+  "emails": [
+    { "email": "teste@teste.com", "is_default": true, "is_dynamic": true }
+  ],
+  "is_active": true,
+  "default_profile": { "id": 1 }
+}
+```
+
+Cole o JSON acima em `Input (raw)` e ative `Send raw body` para replicar exatamente a requisição do cURL.
+
+Observação: quando usar `Send raw body`, campos individuais do formulário (Name/Email/Password/Profiles/Entity) são ocultados para evitar ambiguidade.

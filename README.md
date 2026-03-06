@@ -11,6 +11,11 @@ Node para integração do [GLPI](https://glpi-project.org/) com o [n8n](https://
 - Compatível com n8n Cloud e Self-hosted
 - Credenciais seguras (GLPI URL, App Token, Username, Password)
 
+--
+
+Nota rápida: para a criação/atualização de usuários em `Administration/User` o node agora espera o payload como JSON bruto no campo `Input (raw)`.
+Use a opção `Send raw body` para enviar exatamente esse JSON (sem o wrapper `{ "input": ... }`). Campos individuais como Name/Email/Password foram removidos do formulário para evitar ambiguidade.
+
 ## 🚀 Instalação
 
 1. Clone ou baixe este repositório

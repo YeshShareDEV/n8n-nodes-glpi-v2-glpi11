@@ -415,29 +415,20 @@ export class GlpiV2 implements INodeType {
 
 					if (resource === 'Administration') {
 						if (itemtype.endsWith('/User')) {
-							input.name = this.getNodeParameter('name', itemIndex) as string;
-
-							const firstname = this.getNodeParameter('firstname', itemIndex, '') as string;
-							if (firstname) input.firstname = firstname;
-
-							input.is_active = this.getNodeParameter('is_active', itemIndex, true) ? 1 : 0;
-							input.entities_id = this.getNodeParameter('entities_id', itemIndex, 0) as number;
-
-							const emailPassword = this.getNodeParameter('email_password', itemIndex, true) as boolean;
-							if (!emailPassword) {
-								const password = this.getNodeParameter('password', itemIndex, '') as string;
-								if (password) input.password = password;
+							// For Administration/User creation the node now expects a raw JSON payload
+							// in the `Input (raw)` field. Use `Send raw body` to control whether the
+							// object is sent directly or wrapped as { input }.
+							const rawInput = this.getNodeParameter('input', itemIndex, {}) as IDataObject;
+							const sendRawBody = this.getNodeParameter('sendRawBody', itemIndex, false) as boolean;
+							if (!rawInput || Object.keys(rawInput).length === 0) {
+								if (this.continueOnFail()) {
+									returnData.push({ json: { error: 'Input (raw) is required when creating Administration/User' }, pairedItem: { item: itemIndex } });
+									continue;
+								}
+								throw new ApplicationError('Input (raw) is required when creating Administration/User', { level: 'error' });
 							}
-
-							const email = this.getNodeParameter('email', itemIndex, '') as string;
-							if (email) input._useremails = [email];
-
-							const optionsParam = this.getNodeParameter('options', itemIndex, {}) as IDataObject;
-							if (optionsParam.is_recursive !== undefined) input.is_recursive = optionsParam.is_recursive ? 1 : 0;
-							if (optionsParam.profiles_id) input.profiles_id = optionsParam.profiles_id;
-							if (optionsParam.phone) input.phone = optionsParam.phone;
-							if (optionsParam.mobile) input.mobile = optionsParam.mobile;
-							if (optionsParam.realname) input.realname = optionsParam.realname;
+							// Populate `input` with rawInput so the fallback POST uses it if needed
+							Object.assign(input, rawInput);
 						} else if (itemtype.endsWith('/Group')) {
 							input.name = this.getNodeParameter('name', itemIndex) as string;
 							input.is_requester = this.getNodeParameter('is_requester', itemIndex, true) ? 1 : 0;
@@ -512,15 +503,21 @@ export class GlpiV2 implements INodeType {
 					}
 
 					// If options were not set by a resource-specific handler (e.g. Components), use default POST to itemtype
-					if (!options) {
-						options = {
-							method: 'POST' as IHttpRequestMethods,
-							url: `${baseUrl}/${itemtype}`,
-							headers,
-							body: { input },
-							json: true,
-						};
-					}
+						if (!options) {
+							// If user provided a raw JSON in the `input` field and requested to send it as-is,
+							// use that object as the request body (no { input } wrapper). Otherwise wrap as { input }.
+							const rawInput = this.getNodeParameter('input', itemIndex, {}) as IDataObject;
+							const sendRawBody = this.getNodeParameter('sendRawBody', itemIndex, false) as boolean;
+							const bodyToSend = sendRawBody && rawInput && Object.keys(rawInput).length ? rawInput : { input };
+
+							options = {
+								method: 'POST' as IHttpRequestMethods,
+								url: `${baseUrl}/${itemtype}`,
+								headers,
+								body: bodyToSend,
+								json: true,
+							};
+						}
 
 				} else if (normalizedOperation === 'update') {
 					const id = this.getNodeParameter('itemid', itemIndex);
@@ -528,33 +525,18 @@ export class GlpiV2 implements INodeType {
 
 					if (resource === 'Administration') {
 						if (itemtype.endsWith('/User')) {
-							const name = this.getNodeParameter('name', itemIndex, '') as string;
-							if (name) input.name = name;
-
-							const firstname = this.getNodeParameter('firstname', itemIndex, '') as string;
-							if (firstname) input.firstname = firstname;
-
-							const email = this.getNodeParameter('email', itemIndex, '') as string;
-							if (email) input._useremails = [email];
-
-							const isActive = this.getNodeParameter('is_active', itemIndex, undefined) as boolean | undefined;
-							if (isActive !== undefined) input.is_active = isActive ? 1 : 0;
-
-							const entitiesId = this.getNodeParameter('entities_id', itemIndex, 0) as number;
-							if (entitiesId) input.entities_id = entitiesId;
-
-							const emailPassword = this.getNodeParameter('email_password', itemIndex, true) as boolean;
-							if (!emailPassword) {
-								const password = this.getNodeParameter('password', itemIndex, '') as string;
-								if (password) input.password = password;
+							// For Administration/User updates the node now expects a raw JSON payload
+							// in the `Input (raw)` field. Use `Send raw body` to control whether the
+							// object is sent directly or wrapped as { input }.
+							const rawInput = this.getNodeParameter('input', itemIndex, {}) as IDataObject;
+							if (!rawInput || Object.keys(rawInput).length === 0) {
+								if (this.continueOnFail()) {
+									returnData.push({ json: { error: 'Input (raw) is required when updating Administration/User' }, pairedItem: { item: itemIndex } });
+									continue;
+								}
+								throw new ApplicationError('Input (raw) is required when updating Administration/User', { level: 'error' });
 							}
-
-							const optionsParam = this.getNodeParameter('options', itemIndex, {}) as IDataObject;
-							if (optionsParam.is_recursive !== undefined) input.is_recursive = optionsParam.is_recursive ? 1 : 0;
-							if (optionsParam.profiles_id) input.profiles_id = optionsParam.profiles_id;
-							if (optionsParam.phone) input.phone = optionsParam.phone;
-							if (optionsParam.mobile) input.mobile = optionsParam.mobile;
-							if (optionsParam.realname) input.realname = optionsParam.realname;
+							Object.assign(input, rawInput);
 						} else if (itemtype.endsWith('/Group')) {
 							const name = this.getNodeParameter('name', itemIndex, '') as string;
 							if (name) input.name = name;
@@ -609,19 +591,25 @@ export class GlpiV2 implements INodeType {
 						const componentType = itemtype.includes('/') ? itemtype.split('/')[1] : itemtype;
 						const endpoint = this.getNodeParameter('componentsEndpoint', itemIndex, 'definitions') as string;
 						const url = endpoint === 'instances' ? `${baseUrl}/Components/${componentType}/Items/${id}` : `${baseUrl}/Components/${componentType}/${id}`;
+						const rawInput = this.getNodeParameter('input', itemIndex, {}) as IDataObject;
+						const sendRawBody = this.getNodeParameter('sendRawBody', itemIndex, false) as boolean;
+						const bodyToSend = sendRawBody && rawInput && Object.keys(rawInput).length ? rawInput : { input };
 						options = {
 							method: 'PUT' as IHttpRequestMethods,
 							url,
 							headers,
-							body: { input },
+							body: bodyToSend,
 							json: true,
 						};
 					} else {
+						const rawInput = this.getNodeParameter('input', itemIndex, {}) as IDataObject;
+						const sendRawBody = this.getNodeParameter('sendRawBody', itemIndex, false) as boolean;
+						const bodyToSend = sendRawBody && rawInput && Object.keys(rawInput).length ? rawInput : { input };
 						options = {
 							method: 'PUT' as IHttpRequestMethods,
 							url: `${baseUrl}/${itemtype}/${id}`,
 							headers,
-							body: { input },
+							body: bodyToSend,
 							json: true,
 						};
 					}
